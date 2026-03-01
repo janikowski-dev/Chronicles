@@ -1,7 +1,6 @@
 ﻿#include "SRuleInputNode.h"
 
 #include "FCharacterSet.h"
-#include "FRuleDirectory.h"
 #include "Nodes/Unreal/URuleInputNode.h"
 #include "Widgets/Input/SNumericEntryBox.h"
 

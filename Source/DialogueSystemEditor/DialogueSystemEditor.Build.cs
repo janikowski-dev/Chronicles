@@ -33,7 +33,8 @@ public class DialogueSystemEditor : ModuleRules
 			"EditorStyle",
 			"Projects",
 			"JsonUtilities",
-			"ApplicationCore"
+			"ApplicationCore",
+			"DeveloperSettings"
 		]);
 	}
 }

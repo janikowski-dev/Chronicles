@@ -16,7 +16,8 @@ public class RuleSystemEditor : ModuleRules
 			"ChronicleCore",
 			"AssetRegistry",
 			"AssetTools",
-			"UnrealEd"
+			"UnrealEd",
+			"DeveloperSettings"
 		]);
 	}
 }
