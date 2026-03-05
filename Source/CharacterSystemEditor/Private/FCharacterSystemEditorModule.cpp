@@ -1,12 +1,12 @@
 ﻿#include "FCharacterSystemEditorModule.h"
 
-#include "FChronicleCharacterDirectory.h"
+#include "FChronicle_CharacterDirectory.h"
 
 #define LOCTEXT_NAMESPACE "FCharacterSystemModule"
 
 void FCharacterSystemEditorModule::StartupModule()
 {
-	FChronicleCharacterDirectory::Refresh();
+	FChronicle_CharacterDirectory::Refresh();
 }
 
 void FCharacterSystemEditorModule::ShutdownModule()

@@ -1,12 +1,12 @@
 ﻿#include "FChronicle_CombinedCharacterSet.h"
 
-FChronicle_CombinedCharacterSet::FChronicle_CombinedCharacterSet(FCharacterSet& InSet1, FCharacterSet& InSet2)
+FChronicle_CombinedCharacterSet::FChronicle_CombinedCharacterSet(FChronicle_CharacterSet& InSet1, FChronicle_CharacterSet& InSet2)
 	: Set1(InSet1)
 	, Set2(InSet2)
 {
 }
 
-void FChronicle_CombinedCharacterSet::Refresh(const TArray<FChronicleCharacter>& Characters)
+void FChronicle_CombinedCharacterSet::Refresh(const TArray<FChronicle_Character>& Characters)
 {
 }
 

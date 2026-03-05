@@ -1,41 +1,41 @@
 ﻿#include "FChronicle_RuleDirectory.h"
 
-#include "FRuleSet.h"
-#include "ERuleParameterType.h"
+#include "FChronicle_RuleSet.h"
+#include "EChronicle_RuleParameterType.h"
 #include "UChronicle_RuleSettings.h"
 
-FRuleSet FChronicle_RuleDirectory::RawConditionSet;
-FRuleSet FChronicle_RuleDirectory::IntConditionSet;
-FRuleSet FChronicle_RuleDirectory::CharacterConditionSet;
+FChronicle_RuleSet FChronicle_RuleDirectory::RawConditionSet;
+FChronicle_RuleSet FChronicle_RuleDirectory::IntConditionSet;
+FChronicle_RuleSet FChronicle_RuleDirectory::CharacterConditionSet;
 
-FRuleSet FChronicle_RuleDirectory::RawCallbackSet;
-FRuleSet FChronicle_RuleDirectory::IntCallbackSet;
-FRuleSet FChronicle_RuleDirectory::CharacterCallbackSet;
+FChronicle_RuleSet FChronicle_RuleDirectory::RawCallbackSet;
+FChronicle_RuleSet FChronicle_RuleDirectory::IntCallbackSet;
+FChronicle_RuleSet FChronicle_RuleDirectory::CharacterCallbackSet;
 
-FRuleSet& FChronicle_RuleDirectory::GetConditions(const ERuleParameterType& ParameterType)
+FChronicle_RuleSet& FChronicle_RuleDirectory::GetConditions(const EChronicle_RuleParameterType& ParameterType)
 {
 	switch (ParameterType)
 	{
-	case ERuleParameterType::None:
+	case EChronicle_RuleParameterType::None:
 		return RawConditionSet;
-	case ERuleParameterType::CharacterId:
+	case EChronicle_RuleParameterType::CharacterId:
 		return CharacterConditionSet;
-	case ERuleParameterType::Integer:
+	case EChronicle_RuleParameterType::Integer:
 		return IntConditionSet;
 	}
 	
 	return RawConditionSet;
 }
 
-FRuleSet& FChronicle_RuleDirectory::GetCallbacks(const ERuleParameterType& ParameterType)
+FChronicle_RuleSet& FChronicle_RuleDirectory::GetCallbacks(const EChronicle_RuleParameterType& ParameterType)
 {
 	switch (ParameterType)
 	{
-	case ERuleParameterType::None:
+	case EChronicle_RuleParameterType::None:
 		return RawCallbackSet;
-	case ERuleParameterType::CharacterId:
+	case EChronicle_RuleParameterType::CharacterId:
 		return CharacterCallbackSet;
-	case ERuleParameterType::Integer:
+	case EChronicle_RuleParameterType::Integer:
 		return IntCallbackSet;
 	}
 	
