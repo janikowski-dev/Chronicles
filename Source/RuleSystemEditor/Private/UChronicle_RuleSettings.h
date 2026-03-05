@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "FRule.h"
+#include "FChronicle_Rule.h"
 #include "UChronicle_RuleSettings.generated.h"
 
 UCLASS(Config=RuleSystemEditor, DefaultConfig, meta=(DisplayName="Rules"))
@@ -13,16 +13,16 @@ public:
 
 public:
 	UPROPERTY(Config, EditAnywhere, Category="Conditions")
-	TArray<FRule> RawConditions;
+	TArray<FChronicle_Rule> RawConditions;
 	UPROPERTY(Config, EditAnywhere, Category="Conditions")
-	TArray<FRule> IntConditions;
+	TArray<FChronicle_Rule> IntConditions;
 	UPROPERTY(Config, EditAnywhere, Category="Conditions")
-	TArray<FRule> CharacterConditions;
+	TArray<FChronicle_Rule> CharacterConditions;
 
 	UPROPERTY(Config, EditAnywhere, Category="Callbacks")
-	TArray<FRule> RawCallbacks;
+	TArray<FChronicle_Rule> RawCallbacks;
 	UPROPERTY(Config, EditAnywhere, Category="Callbacks")
-	TArray<FRule> IntCallbacks;
+	TArray<FChronicle_Rule> IntCallbacks;
 	UPROPERTY(Config, EditAnywhere, Category="Callbacks")
-	TArray<FRule> CharacterCallbacks;
+	TArray<FChronicle_Rule> CharacterCallbacks;
 };

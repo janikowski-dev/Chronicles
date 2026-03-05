@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include "FRule.generated.h"
+#include "FChronicle_Rule.generated.h"
 
 USTRUCT()
-struct FRule
+struct FChronicle_Rule
 {
 	GENERATED_BODY()
 

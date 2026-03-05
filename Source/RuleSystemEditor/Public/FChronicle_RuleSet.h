@@ -2,7 +2,7 @@
 
 enum class EChronicle_RuleParameterType : uint8;
 class URuleAsset;
-struct FRule;
+struct FChronicle_Rule;
 
 class RULESYSTEMEDITOR_API FChronicle_RuleSet
 {
@@ -11,7 +11,7 @@ public:
 	explicit FChronicle_RuleSet(const EChronicle_RuleParameterType& ParameterType);
 	
 public:
-	void Refresh(const TArray<FRule>& Rules);
+	void Refresh(const TArray<FChronicle_Rule>& Rules);
 	TArray<TSharedPtr<FGuid>> GetSharedIds() const;
 	FName GetName(FGuid Id) const;
 	bool IsValid(FGuid Id) const;

@@ -1,14 +1,14 @@
 ﻿#include "FChronicle_RuleSet.h"
 
-#include "FRule.h"
+#include "FChronicle_Rule.h"
 
 FChronicle_RuleSet::FChronicle_RuleSet(const EChronicle_RuleParameterType& ParameterType) : ParameterType(ParameterType)
 {
 }
 
-void FChronicle_RuleSet::Refresh(const TArray<FRule>& Rules)
+void FChronicle_RuleSet::Refresh(const TArray<FChronicle_Rule>& Rules)
 {
-	for (const FRule& Rule : Rules)
+	for (const FChronicle_Rule& Rule : Rules)
 	{
 		const bool bContainsId = Ids.ContainsByPredicate([&](const TSharedPtr<FGuid>& Id)
 		{
