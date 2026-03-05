@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "RuleSystem/ERuleParameterType.h"
+#include "ERuleParameterType.h"
 #include "EConditionNodeType.h"
 #include "FRuleData.generated.h"
 

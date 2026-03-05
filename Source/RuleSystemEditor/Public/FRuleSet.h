@@ -1,22 +1,20 @@
 ﻿#pragma once
 
-#include "FRule.h"
-
 enum class ERuleParameterType : uint8;
 class URuleAsset;
+struct FRule;
 
 class RULESYSTEMEDITOR_API FRuleSet
 {
 public:
 	FRuleSet() = default;
-	explicit FRuleSet(const TArray<FRule>& Rules, const ERuleParameterType& ParameterType);
+	explicit FRuleSet(const ERuleParameterType& ParameterType);
 	
 public:
+	void Refresh(const TArray<FRule>& Rules);
 	TArray<TSharedPtr<FGuid>> GetSharedIds() const;
 	FName GetName(FGuid Id) const;
 	bool IsValid(FGuid Id) const;
-	
-	void Refresh();
 	
 private:
 	ERuleParameterType ParameterType;

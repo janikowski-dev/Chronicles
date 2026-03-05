@@ -1,5 +1,7 @@
 ﻿#include "FDialogueNodeEditor.h"
 
+#include "FChronicleCharacterDirectory.h"
+#include "FChronicle_RuleDirectory.h"
 #include "GraphEditor.h"
 #include "Framework/Commands/GenericCommands.h"
 #include "Widgets/Docking/SDockTab.h"
@@ -40,6 +42,9 @@ void FDialogueNodeEditor::InitNodeAssetEditor(
 	UDialogueNode* Node
 )
 {
+	FChronicleCharacterDirectory::Refresh();
+	FChronicle_RuleDirectory::Refresh();
+	
 	const TSharedRef<FTabManager::FLayout> Layout =
 		FTabManager::NewLayout("NodeAssetEditor")
 		->AddArea

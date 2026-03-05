@@ -2,8 +2,8 @@
 
 #include "FRuleNodeFactory.h"
 
-#include "FCharacterDirectory.h"
-#include "URuleSettings.h"
+#include "FChronicleCharacterDirectory.h"
+#include "FChronicle_RuleDirectory.h"
 #include "Nodes/Slate/SRuleDefaultNode.h"
 #include "Nodes/Slate/SRuleInputNode.h"
 #include "Nodes/Unreal/URuleCallbackNode.h"
@@ -13,12 +13,12 @@ TSharedPtr<SGraphNode> FRuleNodeFactory::CreateNode(UEdGraphNode* Node) const
 {
 	if (URuleCallbackNode* TypedNode = Cast<URuleCallbackNode>(Node))
 	{
-		return SNew(SRuleInputNode, TypedNode, GetDefault<URuleSettings>()->GetCallbacks(TypedNode->ParameterType), FCharacterDirectory::GetAll());
+		return SNew(SRuleInputNode, TypedNode, FChronicle_RuleDirectory::GetCallbacks(TypedNode->ParameterType), FChronicleCharacterDirectory::GetAll());
 	}
 	
 	if (URuleConditionNode* TypedNode = Cast<URuleConditionNode>(Node))
 	{
-		return SNew(SRuleInputNode, TypedNode, GetDefault<URuleSettings>()->GetConditions(TypedNode->ParameterType), FCharacterDirectory::GetAll());
+		return SNew(SRuleInputNode, TypedNode, FChronicle_RuleDirectory::GetConditions(TypedNode->ParameterType), FChronicleCharacterDirectory::GetAll());
 	}
 	
 	if (URuleNode* TypedNode = Cast<URuleNode>(Node))

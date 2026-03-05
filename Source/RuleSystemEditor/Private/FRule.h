@@ -10,6 +10,6 @@ struct FRule
 	UPROPERTY(EditAnywhere)
 	FName Name;
 
-	UPROPERTY(EditAnywhere)
-	FGuid Id;
+	UPROPERTY(VisibleAnywhere)
+	FGuid Id = FGuid::NewGuid();
 };

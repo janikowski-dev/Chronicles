@@ -15,7 +15,7 @@
 #include "Nodes/Unreal/URuleNotNode.h"
 #include "Nodes/Unreal/URuleOrNode.h"
 #include "Nodes/Unreal/URuleOutputNode.h"
-#include "DialogueSystem/UDialogueData.h"
+#include "UDialogueData.h"
 #include "Windows/WindowsPlatformApplicationMisc.h"
 
 void FDialogueExporter::CopyToClipboard(const UDialogueAsset* Asset)
@@ -131,6 +131,11 @@ void FDialogueExporter::ReadRoles(UDialogueNode* Node, FDialogueNodeData& NodeDa
     {
         NodeData.ListenerId = LineNode->ListenerId;
         NodeData.SpeakerId = LineNode->SpeakerId;
+    }
+    
+    if (const UDialogueResponseNode* ResponseNode = Cast<UDialogueResponseNode>(Node))
+    {
+        NodeData.ListenerId = ResponseNode->ListenerId;
     }
 }
 

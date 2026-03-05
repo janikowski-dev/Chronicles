@@ -1,18 +1,15 @@
 ﻿#pragma once
 
+struct FChronicleCharacter;
 class UCharacterAsset;
 
 class CHARACTERSYSTEMEDITOR_API FCharacterSet
 {
 public:
-	explicit FCharacterSet(const FName& Directory);
-	
-public:
+	void Refresh(const TArray<FChronicleCharacter>& Characters);
 	TArray<TSharedPtr<FGuid>> GetSharedIds() const;
 	FName GetName(FGuid Id) const;
 	bool IsValid(FGuid Id) const;
-	
-	void Refresh();
 	
 private:
 	TArray<TSharedPtr<FGuid>> Ids;

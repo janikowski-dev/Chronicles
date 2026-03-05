@@ -27,34 +27,8 @@ void URuleGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 void URuleGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
 	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
-			FText::FromString("1. Callbacks"),
+			FText::FromString("1. Conditions"),
 			FText::FromString("1.1. Base Node"),
-			FText::FromString("Adds a callback node without parameter"),
-			URuleCallbackNode::StaticClass(),
-			ERuleParameterType::None
-		)
-	);
-	
-	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
-			FText::FromString("1. Callbacks"),
-			FText::FromString("1.2. Integer Node"),
-			FText::FromString("Adds a callback node with integer parameter"),
-			URuleCallbackNode::StaticClass(),
-			ERuleParameterType::Integer
-		)
-	);
-	
-	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
-			FText::FromString("1. Callbacks"),
-			FText::FromString("1.3. Character Node"),
-			FText::FromString("Adds a callback node with character parameter"),
-			URuleCallbackNode::StaticClass(),
-			ERuleParameterType::CharacterId
-		)
-	);
-	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
-			FText::FromString("2. Conditions"),
-			FText::FromString("2.1. Base Node"),
 			FText::FromString("Adds a condition node without parameter"),
 			URuleConditionNode::StaticClass(),
 			ERuleParameterType::None
@@ -62,8 +36,8 @@ void URuleGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextM
 	);
 	
 	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
-			FText::FromString("2. Conditions"),
-			FText::FromString("2.2. Integer Node"),
+			FText::FromString("1. Conditions"),
+			FText::FromString("1.2. Integer Node"),
 			FText::FromString("Adds a condition node with integer parameter"),
 			URuleConditionNode::StaticClass(),
 			ERuleParameterType::Integer
@@ -71,8 +45,8 @@ void URuleGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextM
 	);
 	
 	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
-			FText::FromString("2. Conditions"),
-			FText::FromString("2.3. Character Node"),
+			FText::FromString("1. Conditions"),
+			FText::FromString("1.3. Character Node"),
 			FText::FromString("Adds a condition node with character parameter"),
 			URuleConditionNode::StaticClass(),
 			ERuleParameterType::CharacterId
@@ -80,8 +54,8 @@ void URuleGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextM
 	);
 	
 	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
-			FText::FromString("3. Operations"),
-			FText::FromString("3.1. And Node"),
+			FText::FromString("2. Operations"),
+			FText::FromString("2.1. And Node"),
 			FText::FromString("Adds an and node"),
 			URuleAndNode::StaticClass(),
 			ERuleParameterType::None
@@ -89,8 +63,8 @@ void URuleGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextM
 	);
 	
 	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
-			FText::FromString("3. Operations"),
-			FText::FromString("3.2. Or Node"),
+			FText::FromString("2. Operations"),
+			FText::FromString("2.2. Or Node"),
 			FText::FromString("Adds an or node"),
 			URuleOrNode::StaticClass(),
 			ERuleParameterType::None
@@ -98,11 +72,38 @@ void URuleGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextM
 	);
 	
 	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
-			FText::FromString("3. Operations"),
-			FText::FromString("3.3. Not Node"),
+			FText::FromString("2. Operations"),
+			FText::FromString("2.3. Not Node"),
 			FText::FromString("Adds a not node"),
 			URuleNotNode::StaticClass(),
 			ERuleParameterType::None
+		)
+	);
+	
+	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
+			FText::FromString("3. Callbacks"),
+			FText::FromString("3.1. Base Node"),
+			FText::FromString("Adds a callback node without parameter"),
+			URuleCallbackNode::StaticClass(),
+			ERuleParameterType::None
+		)
+	);
+	
+	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
+			FText::FromString("3. Callbacks"),
+			FText::FromString("3.2. Integer Node"),
+			FText::FromString("Adds a callback node with integer parameter"),
+			URuleCallbackNode::StaticClass(),
+			ERuleParameterType::Integer
+		)
+	);
+	
+	ContextMenuBuilder.AddAction(MakeShared<FRuleGraph_AddNode>(
+			FText::FromString("3. Callbacks"),
+			FText::FromString("3.3. Character Node"),
+			FText::FromString("Adds a callback node with character parameter"),
+			URuleCallbackNode::StaticClass(),
+			ERuleParameterType::CharacterId
 		)
 	);
 }

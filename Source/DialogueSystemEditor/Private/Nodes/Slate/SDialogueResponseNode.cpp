@@ -1,5 +1,6 @@
 ﻿#include "SDialogueResponseNode.h"
 
+#include "FChronicleCharacterDirectory.h"
 #include "Editors/FDialogueNodeEditor.h"
 #include "Nodes/Unreal/UDialogueResponseNode.h"
 #include "Utils/FColors.h"
@@ -17,6 +18,12 @@ FSlateColor SDialogueResponseNode::GetHeaderColor() const
 	return FColors::Response;
 }
 
+void SDialogueResponseNode::UpdateGraphNode()
+{
+	FixAssignedId();
+	SDialogueNode::UpdateGraphNode();
+}
+
 FReply SDialogueResponseNode::OnMouseButtonDoubleClick(const FGeometry&, const FPointerEvent&)
 {
 	OpenNodeEditor();
@@ -31,7 +38,7 @@ void SDialogueResponseNode::AddBody(const TSharedRef<SVerticalBox>& Box)
 	[
 		FSlateHelper::MakeCharacterDisplay(
 			FDialogueGraphEditorStyle::Get().GetBrush("Icons.Speaker"),
-			FText::FromString("Player")
+			FText::FromName(FChronicleCharacterDirectory::GetAll().GetName(TypedNode->ListenerId))
 		)
 	];
 	
@@ -69,4 +76,24 @@ void SDialogueResponseNode::OpenNodeEditor() const
 			NodeAsset
 		);
 	}
+}
+
+void SDialogueResponseNode::FixAssignedId() const
+{
+	const bool bHasListener = TypedGraph->SharedParticipantIds.ContainsByPredicate([this](const TSharedPtr<FGuid>& Id)
+	{
+		return Id && *Id == TypedNode->ListenerId;
+	});
+	
+	if (bHasListener)
+	{
+		return;
+	}
+
+	const TSharedPtr<FGuid>* PlayerId = TypedGraph->SharedParticipantIds.FindByPredicate([](const TSharedPtr<FGuid>& Id)
+	{
+		return FChronicleCharacterDirectory::GetPlayable().IsValid(*Id);
+	});
+
+	TypedNode->ListenerId = PlayerId ? **PlayerId : FGuid();
 }

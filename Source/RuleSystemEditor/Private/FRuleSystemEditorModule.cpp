@@ -1,15 +1,12 @@
 ﻿#include "FRuleSystemEditorModule.h"
 
-#include "AssetToolsModule.h"
+#include "FChronicle_RuleDirectory.h"
 
 #define LOCTEXT_NAMESPACE "FRuleSystemModule"
 
 void FRuleSystemEditorModule::StartupModule()
 {
-	FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get().RegisterAdvancedAssetCategory(
-		FName("Chronicle"),
-		FText::FromString("Chronicle")
-	);
+	FChronicle_RuleDirectory::Refresh();
 }
 
 void FRuleSystemEditorModule::ShutdownModule()

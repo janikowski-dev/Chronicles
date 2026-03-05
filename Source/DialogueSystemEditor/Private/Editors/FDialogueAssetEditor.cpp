@@ -1,6 +1,6 @@
 ﻿#include "FDialogueAssetEditor.h"
 
-#include "FCharacterDirectory.h"
+#include "FChronicleCharacterDirectory.h"
 #include "Assets/UDialogueAsset.h"
 #include "Graphs/UDialogueGraph.h"
 #include "GraphEditor.h"
@@ -35,7 +35,7 @@ void FDialogueAssetEditor::InitDialogueAssetEditor(
 	UDialogueAsset* Asset
 )
 {
-	FCharacterDirectory::Refresh();
+	FChronicleCharacterDirectory::Refresh();
 	
 	const TSharedRef<FTabManager::FLayout> Layout =
 		FTabManager::NewLayout("DialogueAssetEditor")

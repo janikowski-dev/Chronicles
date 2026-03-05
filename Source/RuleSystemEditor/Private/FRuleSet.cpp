@@ -1,10 +1,25 @@
 ﻿#include "FRuleSet.h"
 
-FRuleSet::FRuleSet(const TArray<FRule>& Rules, const ERuleParameterType& ParameterType)
-	: ParameterType(ParameterType)
+#include "FRule.h"
+
+FRuleSet::FRuleSet(const ERuleParameterType& ParameterType) : ParameterType(ParameterType)
+{
+}
+
+void FRuleSet::Refresh(const TArray<FRule>& Rules)
 {
 	for (const FRule& Rule : Rules)
 	{
+		const bool bContainsId = Ids.ContainsByPredicate([&](const TSharedPtr<FGuid>& Id)
+		{
+			return *Id == Rule.Id;
+		});
+		
+		if (bContainsId)
+		{
+			continue;
+		}
+		
 		TSharedPtr<FGuid> SharedId = MakeShared<FGuid>(Rule.Id);
 		NamesById.Add(Rule.Id, Rule.Name);
 		Ids.Add(SharedId);
@@ -36,8 +51,4 @@ bool FRuleSet::IsValid(const FGuid Id) const
 		}
 	}
 	return false;
-}
-
-void FRuleSet::Refresh()
-{
 }

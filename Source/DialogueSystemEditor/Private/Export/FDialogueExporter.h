@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "DialogueSystem/FDialogueNodeData.h"
+#include "FDialogueNodeData.h"
 #include "Nodes/Unreal/UDialogueRootNode.h"
 
 class UDialogueData;

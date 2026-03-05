@@ -1,6 +1,6 @@
 ﻿#include "SDialogueLinkNode.h"
 
-#include "FCharacterDirectory.h"
+#include "FChronicleCharacterDirectory.h"
 #include "Graphs/UDialogueGraph.h"
 #include "Nodes/Unreal/UDialogueLineNode.h"
 #include "Nodes/Unreal/UDialogueLinkNode.h"
@@ -116,12 +116,12 @@ FText SDialogueLinkNode::GetSelectedNodeText() const
 
 FText SDialogueLinkNode::GetListenerName() const
 {
-    return FText::FromName(FCharacterDirectory::GetAll().GetName(TypedNode->LinkedNode->ListenerId));
+    return FText::FromName(FChronicleCharacterDirectory::GetAll().GetName(TypedNode->LinkedNode->ListenerId));
 }
 
 FText SDialogueLinkNode::GetSpeakerName() const
 {
-    return FText::FromName(FCharacterDirectory::GetAll().GetName(TypedNode->LinkedNode->SpeakerId));
+    return FText::FromName(FChronicleCharacterDirectory::GetAll().GetName(TypedNode->LinkedNode->SpeakerId));
 }
 
 void SDialogueLinkNode::SelectNode(UDialogueLineNode* Node) const

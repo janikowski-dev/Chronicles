@@ -1,6 +1,6 @@
 ﻿#include "SDialogueRootNode.h"
 
-#include "FCharacterDirectory.h"
+#include "FChronicleCharacterDirectory.h"
 #include "Nodes/Unreal/UDialogueRootNode.h"
 #include "Utils/FColors.h"
 #include "Utils/FDialogueGraphEditorStyle.h"
@@ -47,7 +47,7 @@ void SDialogueRootNode::AddCurrentParticipantList(const TSharedRef<SVerticalBox>
 			.VAlign(VAlign_Center)
 			[
 				SNew(STextBlock)
-				.Text(FText::FromName(FCharacterDirectory::GetAll().GetName(*ParticipantId)))
+				.Text(FText::FromName(FChronicleCharacterDirectory::GetAll().GetName(*ParticipantId)))
 			]
 
 			+ SHorizontalBox::Slot()
@@ -115,14 +115,14 @@ FReply SDialogueRootNode::OpenAddParticipantWindow() const
 {
 	const TSharedRef<SVerticalBox> MissingParticipants = SNew(SVerticalBox);
     
-    for (const TSharedPtr<FGuid>& CharacterId : FCharacterDirectory::GetAll().GetSharedIds())
+    for (const TSharedPtr<FGuid>& CharacterId : FChronicleCharacterDirectory::GetAll().GetSharedIds())
     {
         if (TypedGraph->HasParticipant(CharacterId))
         {
             continue;
         }
     
-        const FName CharacterName = FCharacterDirectory::GetAll().GetName(*CharacterId);
+        const FName CharacterName = FChronicleCharacterDirectory::GetAll().GetName(*CharacterId);
     
         MissingParticipants->AddSlot()
         .AutoHeight()

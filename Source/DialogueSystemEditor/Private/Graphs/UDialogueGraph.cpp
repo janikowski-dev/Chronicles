@@ -1,6 +1,6 @@
 ﻿#include "UDialogueGraph.h"
 
-#include "FCharacterDirectory.h"
+#include "FChronicleCharacterDirectory.h"
 #include "Nodes/Unreal/UDialogueLineNode.h"
 #include "Nodes/Unreal/UDialogueResponseNode.h"
 #include "Nodes/Unreal/UDialogueRootNode.h"
@@ -278,10 +278,9 @@ bool UDialogueGraph::TryLoad(FStructuredArchive::FRecord Record)
 		return false;
 	}
 
-	FCharacterDirectory::Refresh();
 	SharedParticipantIds.Reset();
 	
-	for (const TSharedPtr<FGuid>& Id : FCharacterDirectory::GetAll().GetSharedIds())
+	for (const TSharedPtr<FGuid>& Id : FChronicleCharacterDirectory::GetAll().GetSharedIds())
 	{
 		if (ParticipantIds.Contains(*Id))
 		{
@@ -333,18 +332,15 @@ void UDialogueGraph::SortParticipants()
 {
 	SharedParticipantIds.Sort([](const TSharedPtr<FGuid>& A, const TSharedPtr<FGuid>& B)
 	{
-		const FName NameA = FCharacterDirectory::GetAll().GetName(*A);
-		const FName NameB = FCharacterDirectory::GetAll().GetName(*B);
-
-		const bool bAIsPlayer = NameA == "Player";
-		const bool bBIsPlayer = NameB == "Player";
+		const bool bAIsPlayer = FChronicleCharacterDirectory::GetPlayable().IsValid(*A);
+		const bool bBIsPlayer = FChronicleCharacterDirectory::GetPlayable().IsValid(*B);
 
 		if (bAIsPlayer != bBIsPlayer)
 		{
 			return bAIsPlayer;
 		}
 
-		return NameA.LexicalLess(NameB);
+		return false;
 	});
 }
 

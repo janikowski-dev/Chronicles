@@ -16,7 +16,8 @@ public class CharacterSystemEditor : ModuleRules
 			"ChronicleCore",
 			"AssetRegistry",
 			"AssetTools",
-			"UnrealEd"
+			"UnrealEd",
+			"DeveloperSettings"
 		]);
 	}
 }

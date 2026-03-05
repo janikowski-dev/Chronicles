@@ -1,6 +1,6 @@
 ﻿#include "FSlateHelper.h"
 
-#include "FCharacterDirectory.h"
+#include "FChronicleCharacterDirectory.h"
 #include "Widgets/Input/SMultiLineEditableTextBox.h"
 
 TSharedRef<SWidget> FSlateHelper::MakeTextField(
@@ -86,7 +86,7 @@ TSharedRef<SWidget> FSlateHelper::MakeCharacterSelector(
 		.OnGenerateWidget_Lambda([](const TSharedPtr<FGuid>& Id)
 		{
 			return SNew(STextBlock)
-				.Text(FText::FromName(FCharacterDirectory::GetAll().GetName(*Id)));
+				.Text(FText::FromName(FChronicleCharacterDirectory::GetAll().GetName(*Id)));
 		})
 		.Content()
 		[

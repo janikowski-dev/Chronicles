@@ -1,6 +1,6 @@
 ﻿#include "SDialogueLineNode.h"
 
-#include "FCharacterDirectory.h"
+#include "FChronicleCharacterDirectory.h"
 #include "SGraphPanel.h"
 #include "Editors/FDialogueNodeEditor.h"
 #include "Graphs/UDialogueGraph.h"
@@ -23,8 +23,8 @@ FSlateColor SDialogueLineNode::GetHeaderColor() const
 
 void SDialogueLineNode::UpdateGraphNode()
 {
-	SDialogueNode::UpdateGraphNode();
 	FixAssignedIds();
+	SDialogueNode::UpdateGraphNode();
 }
 
 FReply SDialogueLineNode::OnMouseButtonDoubleClick(const FGeometry& InMyGeometry, const FPointerEvent& InMouseEvent)
@@ -82,7 +82,7 @@ void SDialogueLineNode::SetText(const FText& NewText, ETextCommit::Type) const
 
 FText SDialogueLineNode::GetListenerName() const
 {
-	return FText::FromName(FCharacterDirectory::GetAll().GetName(TypedNode->ListenerId));
+	return FText::FromName(FChronicleCharacterDirectory::GetAll().GetName(TypedNode->ListenerId));
 }
 
 void SDialogueLineNode::SetListener(TSharedPtr<FGuid> Id, ESelectInfo::Type) const
@@ -97,7 +97,7 @@ void SDialogueLineNode::SetListener(TSharedPtr<FGuid> Id, ESelectInfo::Type) con
 
 FText SDialogueLineNode::GetSpeakerName() const
 {
-	return FText::FromName(FCharacterDirectory::GetAll().GetName(TypedNode->SpeakerId));
+	return FText::FromName(FChronicleCharacterDirectory::GetAll().GetName(TypedNode->SpeakerId));
 }
 
 void SDialogueLineNode::SetSpeaker(TSharedPtr<FGuid> Id, ESelectInfo::Type) const

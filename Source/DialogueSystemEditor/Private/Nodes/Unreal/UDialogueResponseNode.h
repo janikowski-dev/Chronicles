@@ -21,4 +21,6 @@ public:
 	int32 OrderIndex;
 	UPROPERTY()
 	FText Text;
+	UPROPERTY()
+	FGuid ListenerId;
 };

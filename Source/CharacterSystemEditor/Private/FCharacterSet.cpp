@@ -1,10 +1,25 @@
 ﻿#include "FCharacterSet.h"
 
-#include "AssetRegistry/AssetRegistryModule.h"
-#include "CharacterSystem/UCharacterAsset.h"
+#include "FChronicleCharacter.h"
 
-FCharacterSet::FCharacterSet(const FName& Directory) : Directory(Directory)
+void FCharacterSet::Refresh(const TArray<FChronicleCharacter>& Characters)
 {
+	for (const FChronicleCharacter& Character : Characters)
+	{
+		const bool bContainsId = Ids.ContainsByPredicate([&](const TSharedPtr<FGuid>& Id)
+		{
+			return *Id == Character.Id;
+		});
+		
+		if (bContainsId)
+		{
+			continue;
+		}
+		
+		TSharedPtr<FGuid> SharedId = MakeShared<FGuid>(Character.Id);
+		NamesById.Add(Character.Id, Character.Name);
+		Ids.Add(SharedId);
+	}
 }
 
 FName FCharacterSet::GetName(const FGuid Id) const
@@ -32,37 +47,4 @@ bool FCharacterSet::IsValid(const FGuid Id) const
 		}
 	}
 	return false;
-}
-
-void FCharacterSet::Refresh()
-{
-	NamesById.Empty();
-	Ids.Empty();
-
-	const IAssetRegistry& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
-
-	FARFilter Filter;
-	Filter.ClassPaths.Add(FTopLevelAssetPath(UCharacterAsset::StaticClass()));
-	Filter.PackagePaths.Add(Directory);
-	Filter.bRecursivePaths = true;
-
-	TArray<FAssetData> CharacterAssets;
-	AssetRegistry.GetAssets(Filter, CharacterAssets);
-
-	for (const FAssetData& AssetData : CharacterAssets)
-	{
-		if (const UCharacterAsset* Asset = Cast<UCharacterAsset>(AssetData.GetAsset()))
-		{
-			TSharedPtr<FGuid> SharedCharacterId = MakeShared<FGuid>(Asset->CharacterId);
-			NamesById.Add(Asset->CharacterId, Asset->CharacterName);
-			Ids.Add(SharedCharacterId);
-
-			UE_LOG(LogTemp, Warning, TEXT("Loaded Character Asset: %s | CharacterId: %s"), 
-				*Asset->CharacterName.ToString(), 
-				*Asset->CharacterId.ToString()
-			);
-		}
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Loaded Character Assets"));
 }
