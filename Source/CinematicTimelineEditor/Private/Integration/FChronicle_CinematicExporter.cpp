@@ -1,44 +1,68 @@
 ﻿#include "FChronicle_CinematicExporter.h"
 
+#include "FileHelpers.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "UObject/SavePackage.h"
 
-UChronicle_CinematicData* FChronicle_CinematicExporter::ExportToCinematicData(const UChronicle_DialogueData* Input)
+UChronicle_CinematicData* FChronicle_CinematicExporter::ConvertToCinematicData(const UChronicle_DialogueData* Input)
 {
-    const FString PackagePath = TEXT("/Game/Cinematics/") + Input->GetName();
-    UPackage* Package = CreatePackage(*PackagePath);
+    UChronicle_CinematicData* Output = NewObject<UChronicle_CinematicData>();
+    PopulateOutput(Input, Output);
+    return Output;
+}
 
-    UChronicle_CinematicData* Output = NewObject<UChronicle_CinematicData>(Package, 
+UChronicle_CinematicData* FChronicle_CinematicExporter::ExportToCinematicData(const UChronicle_DialogueData* Input, const FString Path)
+{
+    UPackage* Package = CreatePackage(*Path);
+
+    UChronicle_CinematicData* Output = NewObject<UChronicle_CinematicData>(
+        Package,
         UChronicle_CinematicData::StaticClass(),
-        *FPaths::GetBaseFilename(PackagePath),
+        *FPaths::GetBaseFilename(Path),
         RF_Public | RF_Standalone
     );
 
+    PopulateOutput(Input, Output);
+
+    FString PackageFilename;
+    FPackageName::TryConvertLongPackageNameToFilename(Path,PackageFilename,FPackageName::GetAssetPackageExtension());
+
+    FSavePackageArgs SaveArgs;
+    SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+    SaveArgs.Error = GError;
+    SaveArgs.bForceByteSwapping = false;
+    SaveArgs.bWarnOfLongFilename = true;
+
+    UPackage::SavePackage(Package, Output, *PackageFilename, SaveArgs);
+    UEditorLoadingAndSavingUtils::SavePackages({ Package }, false);
+    FAssetRegistryModule::AssetCreated(Output);
+    return Output;
+}
+
+void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData* Input, UChronicle_CinematicData* Output)
+{
     TMap<FGuid, const FChronicle_DialogueNodeData*> NodeMap;
-    
     NodeMap.Reserve(Input->Nodes.Num());
-    
+
     for (const FChronicle_DialogueNodeData& Node : Input->Nodes)
     {
         NodeMap.Add(Node.Id, &Node);
     }
 
     const FChronicle_DialogueNodeData* Root = nullptr;
-    
+
     for (const FChronicle_DialogueNodeData& Node : Input->Nodes)
     {
-        if (Node.Type != EChronicle_DialogueNodeType::Root)
+        if (Node.Type == EChronicle_DialogueNodeType::Root)
         {
-            continue;
+            Root = &Node;
+            break;
         }
-
-        Root = &Node;
-        break;
     }
 
     if (!Root)
     {
-        return Output;
+        return;
     }
 
     struct FTraversalState
@@ -93,13 +117,13 @@ UChronicle_CinematicData* FChronicle_CinematicExporter::ExportToCinematicData(co
 
         switch (Current->Type)
         {
-            case EChronicle_DialogueNodeType::Root:
+        case EChronicle_DialogueNodeType::Root:
             {
                 PushChildren(Stack, Current, MoveTemp(State.AccumulatedNodes));
                 break;
             }
 
-            case EChronicle_DialogueNodeType::Line:
+        case EChronicle_DialogueNodeType::Line:
             {
                 Output->LineNodeIds.Add(Current->Id);
 
@@ -122,14 +146,7 @@ UChronicle_CinematicData* FChronicle_CinematicExporter::ExportToCinematicData(co
                 break;
             }
 
-            case EChronicle_DialogueNodeType::Response:
-            {
-                FlushSequence(State.AccumulatedNodes);
-                PushChildren(Stack, Current, {});
-                break;
-            }
-
-            default:
+        default:
             {
                 FlushSequence(State.AccumulatedNodes);
                 PushChildren(Stack, Current, {});
@@ -137,24 +154,4 @@ UChronicle_CinematicData* FChronicle_CinematicExporter::ExportToCinematicData(co
             }
         }
     }
-
-    Package->MarkPackageDirty();
-
-    FString PackageFilename;
-    FPackageName::TryConvertLongPackageNameToFilename(
-        PackagePath,
-        PackageFilename,
-        FPackageName::GetAssetPackageExtension()
-    );
-
-    FSavePackageArgs SaveArgs;
-    SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
-    SaveArgs.Error = GError;
-    SaveArgs.bForceByteSwapping = false;
-    SaveArgs.bWarnOfLongFilename = true;
-
-    UPackage::SavePackage(Package, Output, *PackageFilename, SaveArgs);
-    
-    FAssetRegistryModule::AssetCreated(Output);
-    return Output;
 }

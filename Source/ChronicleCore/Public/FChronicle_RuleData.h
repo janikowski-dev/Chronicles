@@ -22,7 +22,7 @@ struct CHRONICLECORE_API FChronicle_RuleData
 	FGuid Id;
 	
 	UPROPERTY(VisibleAnywhere)
-	EChronicle_RuleParameterType ParameterType;
+	EChronicle_RuleParameterType ParameterType = EChronicle_RuleParameterType::None;
 	
 	UPROPERTY(VisibleAnywhere)
 	FGuid ParameterCharacterId;

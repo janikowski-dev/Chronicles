@@ -19,7 +19,8 @@ public class CinematicTimelineEditor : ModuleRules
 			"ToolMenus",
 			"Slate",
 			"SlateCore",
-			"DeveloperSettings"
+			"DeveloperSettings",
+			"UnrealEd"
 		]);
 	}
 }

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "FChronicle_CinematicEntry.h"
+#include "UChronicle_CinematicData.h"
 #include "Engine/DeveloperSettings.h"
 #include "UChronicle_ExportInfo.generated.h"
 
@@ -12,9 +13,10 @@ class CINEMATICTIMELINEEDITOR_API UChronicle_ExportInfo : public UDeveloperSetti
 public:
 	virtual FName GetCategoryName() const override;
 	
-	void UpdateStatus(const FString& Name, const EChronicle_CinematicAssetExportStatus Status);
-	void UpdateExportInfo(const FString& Name, const FDateTime ExportTime, const FString& CinematicPath);
-	void TryAdd(const FChronicle_CinematicEntry& InEntry);
+	void UpdateStatus(const FString& Path, const EChronicle_CinematicAssetExportStatus Status);
+	void UpdateExportInfo(const FString& Path, const FDateTime ExportTime, const FString& CinematicPath);
+	FChronicle_CinematicEntry TryAdd(const FChronicle_CinematicEntry& InEntry);
+	bool AreEqual(const UChronicle_CinematicData* A, const UChronicle_CinematicData* B);
 
 public:
 	UPROPERTY(Config, EditAnywhere, meta=(DisplayPriority=0))

@@ -12,16 +12,22 @@ class CINEMATICTIMELINEEDITOR_API UChronicle_CinematicFunctionLibrary : public U
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
-	static UChronicle_CinematicData* ExportToCinematicData(const UChronicle_DialogueData* Asset);
+	static UChronicle_CinematicData* ExportToCinematicData(const UChronicle_DialogueData* Asset, const FString Path);
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
-	static void UpdateStatus(FString Name, EChronicle_CinematicAssetExportStatus Status);
+	static UChronicle_CinematicData* ConvertToCinematicData(const UChronicle_DialogueData* Asset);
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
-	static void UpdateExportInfo(FString Name, const FDateTime ExportTime, const FString& CinematicPath);
+	static void UpdateStatus(FString Path, EChronicle_CinematicAssetExportStatus Status);
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
-	static void TryAdd(FChronicle_CinematicEntry Entry);
+	static void UpdateExportInfo(FString Path, const FDateTime ExportTime, const FString& CinematicPath);
+
+	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
+	static bool AreEqual(const UChronicle_CinematicData* A, const UChronicle_CinematicData* B);
+	
+	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
+	static FChronicle_CinematicEntry TryAdd(FChronicle_CinematicEntry Entry);
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
 	static TArray<FChronicle_CinematicEntry> GetAll();

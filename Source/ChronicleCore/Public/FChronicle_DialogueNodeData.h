@@ -13,7 +13,7 @@ struct CHRONICLECORE_API FChronicle_DialogueNodeData
 	FGuid Id;
 
 	UPROPERTY(VisibleAnywhere)
-	EChronicle_DialogueNodeType Type;
+	EChronicle_DialogueNodeType Type = EChronicle_DialogueNodeType::Root;
 
 	UPROPERTY(VisibleAnywhere)
 	FString Text;
