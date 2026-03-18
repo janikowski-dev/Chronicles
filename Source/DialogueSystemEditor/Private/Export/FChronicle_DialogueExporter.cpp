@@ -76,12 +76,8 @@ void FChronicle_DialogueExporter::ReadData(const UChronicle_DialogueAsset* Asset
 
 FChronicle_DialogueNodeData FChronicle_DialogueExporter::ReadNodeData(UChronicle_DialogueNode* Node)
 {
-    if (!TryGetLinkNodeTarget(Node))
-    {
-        return {};
-    }
-    
     FChronicle_DialogueNodeData NodeData;
+    ReadLinkData(Node, NodeData);
     ReadSharedData(Node, NodeData);
     ReadType(Node,NodeData);
     ReadRoles(Node, NodeData);
@@ -99,24 +95,20 @@ void FChronicle_DialogueExporter::TryReadRootData(UChronicle_DialogueData* Data,
     }
 }
 
-void FChronicle_DialogueExporter::ReadNodeData(UChronicle_DialogueData* Data, const FChronicle_DialogueNodeData& NodeData)
-{
-    Data->Nodes.Add(NodeData);
-}
-
-bool FChronicle_DialogueExporter::TryGetLinkNodeTarget(UChronicle_DialogueNode*& Node)
+void FChronicle_DialogueExporter::ReadLinkData(UEdGraphNode* Node, FChronicle_DialogueNodeData& NodeData)
 {
     if (const UChronicle_DialogueLinkNode* LinkNode = Cast<UChronicle_DialogueLinkNode>(Node))
     {
-        Node = LinkNode->GetLinkedNode();
-        
-        if (!Node)
+        if (LinkNode->GetLinkedNode())
         {
-            return false;
+            NodeData.LinkTargetId = LinkNode->GetLinkedNode()->Id;
         }
     }
-    
-    return true;
+}
+
+void FChronicle_DialogueExporter::ReadNodeData(UChronicle_DialogueData* Data, const FChronicle_DialogueNodeData& NodeData)
+{
+    Data->Nodes.Add(NodeData);
 }
 
 void FChronicle_DialogueExporter::ReadSharedData(const UChronicle_DialogueNode* Node, FChronicle_DialogueNodeData& NodeData)
@@ -138,6 +130,10 @@ void FChronicle_DialogueExporter::ReadType(const UChronicle_DialogueNode* Node, 
     else if (Cast<UChronicle_DialogueLineNode>(Node))
     {
         NodeData.Type = EChronicle_DialogueNodeType::Line;
+    }
+    else if (Cast<UChronicle_DialogueLinkNode>(Node))
+    {
+        NodeData.Type = EChronicle_DialogueNodeType::Link;
     }
 }
 
@@ -250,8 +246,8 @@ void FChronicle_DialogueExporter::ReadChildren(UChronicle_DialogueNode* Node, FC
         
         for (const UEdGraphPin* Linked : Pin->LinkedTo)
         {
-            const UChronicle_DialogueNode* Response = Cast<UChronicle_DialogueNode>(Linked->GetOwningNode());
-            NodeData.Children.Add(Response->Id);
+            const UChronicle_DialogueNode* Child = Cast<UChronicle_DialogueNode>(Linked->GetOwningNode());
+            NodeData.Children.Add(Child->Id);
         }
     }
 }

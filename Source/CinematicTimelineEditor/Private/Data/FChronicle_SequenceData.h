@@ -4,14 +4,23 @@
 #include "FChronicle_DialogueNodeData.h"
 #include "FChronicle_SequenceData.generated.h"
 
-USTRUCT()
-struct FChronicle_SequenceData
+USTRUCT(BlueprintType)
+struct CINEMATICTIMELINEEDITOR_API FChronicle_SequenceData
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FGuid Id;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FChronicle_DialogueNodeData> Nodes;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<ULevelSequence> Sequence;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FGuid NextNodeId;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FGuid> BranchSequenceIds;
 };

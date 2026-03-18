@@ -5,5 +5,6 @@ enum class EChronicle_DialogueNodeType : uint8
 {
 	Root,
 	Response,
-	Line
+	Line,
+	Link
 };

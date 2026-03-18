@@ -25,6 +25,12 @@ void UChronicle_CinematicFunctionLibrary::UpdateExportInfo(const FString Path, c
 	GetMutableDefault<UChronicle_ExportInfo>()->SaveConfig();
 }
 
+void UChronicle_CinematicFunctionLibrary::Remove(const FString Path)
+{
+	GetMutableDefault<UChronicle_ExportInfo>()->Remove(Path);
+	GetMutableDefault<UChronicle_ExportInfo>()->SaveConfig();
+}
+
 bool UChronicle_CinematicFunctionLibrary::AreEqual(const UChronicle_CinematicData* A, const UChronicle_CinematicData* B)
 {
 	return GetMutableDefault<UChronicle_ExportInfo>()->AreEqual(A, B);

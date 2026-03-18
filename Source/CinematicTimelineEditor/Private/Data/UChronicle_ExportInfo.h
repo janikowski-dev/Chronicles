@@ -16,6 +16,7 @@ public:
 	void UpdateStatus(const FString& Path, const EChronicle_CinematicAssetExportStatus Status);
 	void UpdateExportInfo(const FString& Path, const FDateTime ExportTime, const FString& CinematicPath);
 	FChronicle_CinematicEntry TryAdd(const FChronicle_CinematicEntry& InEntry);
+	void Remove(const FString& Path);
 	bool AreEqual(const UChronicle_CinematicData* A, const UChronicle_CinematicData* B);
 
 public:

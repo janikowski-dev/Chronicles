@@ -4,32 +4,35 @@
 #include "FChronicle_RuleData.h"
 #include "FChronicle_DialogueNodeData.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct CHRONICLECORE_API FChronicle_DialogueNodeData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FGuid Id;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	EChronicle_DialogueNodeType Type = EChronicle_DialogueNodeType::Root;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FString Text;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FGuid SpeakerId;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FGuid ListenerId;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FChronicle_RuleData> Rules;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FGuid> Callbacks;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FGuid> Children;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FGuid LinkTargetId;
 };

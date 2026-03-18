@@ -4,29 +4,29 @@
 #include "EChronicle_ConditionNodeType.h"
 #include "FChronicle_RuleData.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct CHRONICLECORE_API FChronicle_RuleData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	EChronicle_ConditionNodeType Type = EChronicle_ConditionNodeType::Raw;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FGuid> Input;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FGuid> Output;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FGuid Id;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	EChronicle_RuleParameterType ParameterType = EChronicle_RuleParameterType::None;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FGuid ParameterCharacterId;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int32 ParameterInteger;
 };

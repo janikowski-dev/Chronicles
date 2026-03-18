@@ -1,6 +1,4 @@
 ﻿#include "UChronicle_ExportInfo.h"
-
-#include "JsonObjectConverter.h"
 #include "UChronicle_CinematicData.h"
 
 FName UChronicle_ExportInfo::GetCategoryName() const
@@ -53,6 +51,14 @@ FChronicle_CinematicEntry UChronicle_ExportInfo::TryAdd(const FChronicle_Cinemat
 
 	Entries.Add(InEntry);
 	return InEntry;
+}
+
+void UChronicle_ExportInfo::Remove(const FString& Path)
+{
+	Entries.RemoveAll([&Path](const FChronicle_CinematicEntry& Entry)
+	{
+		return Entry.MainPath == Path;
+	});
 }
 
 bool UChronicle_ExportInfo::AreEqual(const UChronicle_CinematicData* A, const UChronicle_CinematicData* B)

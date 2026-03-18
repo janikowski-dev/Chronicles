@@ -4,7 +4,7 @@
 #include "FChronicle_CinematicEntry.generated.h"
 
 USTRUCT(BlueprintType)
-struct FChronicle_CinematicEntry
+struct CINEMATICTIMELINEEDITOR_API FChronicle_CinematicEntry
 {
 	GENERATED_BODY()
 	

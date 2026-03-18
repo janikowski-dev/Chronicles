@@ -27,9 +27,9 @@ private:
 	static FChronicle_DialogueNodeData ReadNodeData(UChronicle_DialogueNode* Node);
 	
 	static void TryReadRootData(UChronicle_DialogueData* Data, UEdGraphNode* Node);
+	static void ReadLinkData(UEdGraphNode* Node, FChronicle_DialogueNodeData& NodeData);
 	static void ReadNodeData(UChronicle_DialogueData* Data, const FChronicle_DialogueNodeData& NodeData);
 	
-	static bool TryGetLinkNodeTarget(UChronicle_DialogueNode*& Node);
 	static void ReadSharedData(const UChronicle_DialogueNode* Node, FChronicle_DialogueNodeData& NodeData);
 	static void ReadType(const UChronicle_DialogueNode* Node, FChronicle_DialogueNodeData& NodeData);
 	static void ReadRoles(UChronicle_DialogueNode* Node, FChronicle_DialogueNodeData& NodeData);

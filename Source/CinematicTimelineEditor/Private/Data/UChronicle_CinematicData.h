@@ -4,17 +4,17 @@
 #include "UChronicle_CinematicData.generated.h"
 
 UCLASS(BlueprintType, Blueprintable)
-class UChronicle_CinematicData : public UDataAsset
+class CINEMATICTIMELINEEDITOR_API UChronicle_CinematicData : public UDataAsset
 {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(VisibleAnywhere)
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TMap<FGuid, TSoftObjectPtr<USoundBase>> SoundsByLine;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FChronicle_SequenceData> SequencesData;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FGuid> LineNodeIds;
 };

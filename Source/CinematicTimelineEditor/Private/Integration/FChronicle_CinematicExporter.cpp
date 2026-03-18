@@ -14,6 +14,7 @@ UChronicle_CinematicData* FChronicle_CinematicExporter::ConvertToCinematicData(c
 UChronicle_CinematicData* FChronicle_CinematicExporter::ExportToCinematicData(const UChronicle_DialogueData* Input, const FString Path)
 {
     UPackage* Package = CreatePackage(*Path);
+    Package->FullyLoad();
 
     UChronicle_CinematicData* Output = NewObject<UChronicle_CinematicData>(
         Package,
@@ -49,6 +50,17 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
         NodeMap.Add(Node.Id, &Node);
     }
 
+    TMap<FGuid, FGuid> FirstNodeToSequenceId;
+    TMap<FGuid, FChronicle_SequenceData> SequenceMap;
+
+    for (const FChronicle_DialogueNodeData& Node : Input->Nodes)
+    {
+        if (Node.Type == EChronicle_DialogueNodeType::Line)
+        {
+            FirstNodeToSequenceId.Add(Node.Id, FGuid::NewGuid());
+        }
+    }
+
     const FChronicle_DialogueNodeData* Root = nullptr;
 
     for (const FChronicle_DialogueNodeData& Node : Input->Nodes)
@@ -69,89 +81,195 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
     {
         const FChronicle_DialogueNodeData* Node;
         TArray<FChronicle_DialogueNodeData> AccumulatedNodes;
+        FGuid ParentSequenceId;
+        bool bIsBranch;
     };
 
-    auto FlushSequence = [&](TArray<FChronicle_DialogueNodeData>& Nodes)
+    TMap<FGuid, FGuid> SequenceIdToFirstNodeId;
+
+    auto WireToParent = [&](const FGuid& FirstNodeId, const FGuid& ParentSequenceId, bool bIsBranch)
     {
-        if (Nodes.Num() == 0)
+        if (!ParentSequenceId.IsValid() || !FirstNodeId.IsValid())
         {
             return;
         }
 
-        FChronicle_SequenceData NewSequence;
-        NewSequence.Nodes = MoveTemp(Nodes);
-        Output->SequencesData.Add(MoveTemp(NewSequence));
-        Nodes.Reset();
-    };
-
-    auto PushChildren = [&](TArray<FTraversalState>& Stack, const FChronicle_DialogueNodeData* Node, TArray<FChronicle_DialogueNodeData> SharedAccumulated)
-    {
-        for (const FGuid& ChildId : Node->Children)
+        if (FChronicle_SequenceData* Parent = SequenceMap.Find(ParentSequenceId))
         {
-            if (const FChronicle_DialogueNodeData* const* Child = NodeMap.Find(ChildId))
+            if (bIsBranch)
             {
-                Stack.Push({ *Child, SharedAccumulated });
+                Parent->BranchSequenceIds.AddUnique(*FirstNodeToSequenceId.Find(FirstNodeId));
+            }
+            else
+            {
+                Parent->NextNodeId = FirstNodeId;
             }
         }
     };
 
-    TArray<FTraversalState> Stack;
-    TSet<FGuid> Visited;
+    auto FlushSequence = [&](
+        TArray<FChronicle_DialogueNodeData>& Nodes,
+        const FGuid& ParentSequenceId,
+        bool bIsBranch
+    ) -> FGuid
+    {
+        if (Nodes.Num() == 0)
+        {
+            return FGuid();
+        }
 
+        const FGuid FirstNodeId = Nodes[0].Id;
+        const FGuid SequenceId = FirstNodeToSequenceId.FindOrAdd(FirstNodeId, FGuid::NewGuid());
+
+        FChronicle_SequenceData NewSequence;
+        NewSequence.Id = SequenceId;
+        NewSequence.Nodes = MoveTemp(Nodes);
+        Nodes.Reset();
+
+        SequenceMap.Add(SequenceId, MoveTemp(NewSequence));
+        WireToParent(FirstNodeId, ParentSequenceId, bIsBranch);
+
+        return SequenceId;
+    };
+
+    auto TryPushChild = [&](
+        TArray<FTraversalState>& Stack,
+        const FGuid& ChildId,
+        TArray<FChronicle_DialogueNodeData> Accumulated,
+        const FGuid& ParentSequenceId,
+        bool bIsBranch
+    )
+    {
+        const FChronicle_DialogueNodeData* const* Child = NodeMap.Find(ChildId);
+
+        if (!Child)
+        {
+            return;
+        }
+
+        if (FGuid* ExistingSeqId = FirstNodeToSequenceId.Find(ChildId))
+        {
+            if (SequenceMap.Contains(*ExistingSeqId))
+            {
+                if (Accumulated.Num() > 0)
+                {
+                    FGuid FlushedId = FlushSequence(Accumulated, ParentSequenceId, bIsBranch);
+                    if (FChronicle_SequenceData* Flushed = SequenceMap.Find(FlushedId))
+                    {
+                        Flushed->NextNodeId = ChildId;
+                    }
+                }
+                else
+                {
+                    WireToParent(ChildId, ParentSequenceId, bIsBranch);
+                }
+                return;
+            }
+        }
+
+        Stack.Push({ *Child, MoveTemp(Accumulated), ParentSequenceId, bIsBranch });
+    };
+
+    TArray<FTraversalState> Stack;
     Stack.Reserve(Input->Nodes.Num());
-    Stack.Push({ Root, {} });
+    Stack.Push({ Root, {}, FGuid(), false });
 
     while (Stack.Num() > 0)
     {
         FTraversalState State = Stack.Pop();
         const FChronicle_DialogueNodeData* Current = State.Node;
 
-        if (!Current || Visited.Contains(Current->Id))
+        if (!Current)
         {
-            FlushSequence(State.AccumulatedNodes);
+            FlushSequence(State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
             continue;
         }
-
-        Visited.Add(Current->Id);
-        State.AccumulatedNodes.Add(*Current);
 
         switch (Current->Type)
         {
         case EChronicle_DialogueNodeType::Root:
+        {
+            for (const FGuid& ChildId : Current->Children)
             {
-                PushChildren(Stack, Current, MoveTemp(State.AccumulatedNodes));
-                break;
+                TryPushChild(Stack, ChildId, {}, FGuid(), false);
             }
+            break;
+        }
+
+        case EChronicle_DialogueNodeType::Link:
+        {
+            if (Current->LinkTargetId.IsValid())
+            {
+                FGuid FlushedId = FlushSequence(State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
+                if (FChronicle_SequenceData* Flushed = SequenceMap.Find(FlushedId))
+                {
+                    Flushed->NextNodeId = Current->LinkTargetId;
+                }
+            }
+            else
+            {
+                FlushSequence(State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
+            }
+            break;
+        }
 
         case EChronicle_DialogueNodeType::Line:
-            {
-                Output->LineNodeIds.Add(Current->Id);
+        {
+            State.AccumulatedNodes.Add(*Current);
+            Output->LineNodeIds.Add(Current->Id);
 
-                if (Current->Children.Num() == 0)
+            if (Current->Children.Num() == 0)
+            {
+                FlushSequence(State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
+            }
+            else if (Current->Children.Num() == 1)
+            {
+                TryPushChild(Stack, Current->Children[0], MoveTemp(State.AccumulatedNodes), State.ParentSequenceId, State.bIsBranch);
+            }
+            else
+            {
+                TArray<FGuid> LineChildren;
+                TArray<FGuid> OtherChildren;
+
+                for (const FGuid& ChildId : Current->Children)
                 {
-                    FlushSequence(State.AccumulatedNodes);
-                }
-                else if (Current->Children.Num() == 1)
-                {
-                    if (const FChronicle_DialogueNodeData* const* Child = NodeMap.Find(Current->Children[0]))
+                    if (const FChronicle_DialogueNodeData* const* Child = NodeMap.Find(ChildId))
                     {
-                        Stack.Push({ *Child, MoveTemp(State.AccumulatedNodes) });
+                        if ((*Child)->Type == EChronicle_DialogueNodeType::Line)
+                            LineChildren.Add(ChildId);
+                        else
+                            OtherChildren.Add(ChildId);
                     }
                 }
-                else
+
+                FGuid FlushedId = FlushSequence(State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
+
+                for (const FGuid& ChildId : LineChildren)
                 {
-                    FlushSequence(State.AccumulatedNodes);
-                    PushChildren(Stack, Current, {});
+                    TryPushChild(Stack, ChildId, {}, FlushedId, true);
                 }
-                break;
+
+                for (const FGuid& ChildId : OtherChildren)
+                {
+                    TryPushChild(Stack, ChildId, {}, FlushedId, true);
+                }
             }
+            break;
+        }
 
         default:
+        {
+            for (const FGuid& ChildId : Current->Children)
             {
-                FlushSequence(State.AccumulatedNodes);
-                PushChildren(Stack, Current, {});
-                break;
+                TryPushChild(Stack, ChildId, State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
             }
+            break;
         }
+        }
+    }
+
+    for (auto& Pair : SequenceMap)
+    {
+        Output->SequencesData.Add(MoveTemp(Pair.Value));
     }
 }

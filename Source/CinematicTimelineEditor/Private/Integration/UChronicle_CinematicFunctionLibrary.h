@@ -24,6 +24,9 @@ public:
 	static void UpdateExportInfo(FString Path, const FDateTime ExportTime, const FString& CinematicPath);
 
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
+	static void Remove(FString Path);
+
+	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
 	static bool AreEqual(const UChronicle_CinematicData* A, const UChronicle_CinematicData* B);
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Dialogue")
