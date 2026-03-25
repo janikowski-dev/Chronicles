@@ -49,6 +49,8 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
     {
         NodeMap.Add(Node.Id, &Node);
     }
+    
+    Output->ParticipantIds = Input->ParticipantIds;
 
     TMap<FGuid, FGuid> FirstNodeToSequenceId;
     TMap<FGuid, FChronicle_SequenceData> SequenceMap;

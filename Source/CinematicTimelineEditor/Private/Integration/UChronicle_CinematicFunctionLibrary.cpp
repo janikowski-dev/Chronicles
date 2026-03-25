@@ -47,3 +47,8 @@ TArray<FChronicle_CinematicEntry> UChronicle_CinematicFunctionLibrary::GetAll()
 {
 	return GetDefault<UChronicle_ExportInfo>()->Entries;
 }
+
+TSoftObjectPtr<UWorld> UChronicle_CinematicFunctionLibrary::ToWorldPointer(const FString Path)
+{
+	return TSoftObjectPtr<UWorld>(FSoftObjectPath(Path));
+}

@@ -34,4 +34,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
 	static TArray<FChronicle_CinematicEntry> GetAll();
+	
+	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
+	static TSoftObjectPtr<UWorld> ToWorldPointer(const FString Path);
 };
