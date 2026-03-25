@@ -147,7 +147,7 @@ void FChronicle_DialogueExporter::ReadRoles(UChronicle_DialogueNode* Node, FChro
     
     if (const UChronicle_DialogueResponseNode* ResponseNode = Cast<UChronicle_DialogueResponseNode>(Node))
     {
-        NodeData.ListenerId = ResponseNode->ListenerId;
+        NodeData.SpeakerId = ResponseNode->SpeakerId;
     }
 }
 

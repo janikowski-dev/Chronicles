@@ -201,6 +201,7 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
             if (Current->LinkTargetId.IsValid())
             {
                 FGuid FlushedId = FlushSequence(State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
+                
                 if (FChronicle_SequenceData* Flushed = SequenceMap.Find(FlushedId))
                 {
                     Flushed->NextNodeId = Current->LinkTargetId;
@@ -213,6 +214,7 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
             break;
         }
 
+        case EChronicle_DialogueNodeType::Response:
         case EChronicle_DialogueNodeType::Line:
         {
             State.AccumulatedNodes.Add(*Current);
@@ -236,9 +238,13 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
                     if (const FChronicle_DialogueNodeData* const* Child = NodeMap.Find(ChildId))
                     {
                         if ((*Child)->Type == EChronicle_DialogueNodeType::Line)
+                        {
                             LineChildren.Add(ChildId);
+                        }
                         else
+                        {
                             OtherChildren.Add(ChildId);
+                        }
                     }
                 }
 
