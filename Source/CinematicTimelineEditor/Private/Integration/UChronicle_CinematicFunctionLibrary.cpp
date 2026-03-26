@@ -1,5 +1,6 @@
 ﻿#include "UChronicle_CinematicFunctionLibrary.h"
 
+#include "FChronicle_CinematicBlueprintUtilities.h"
 #include "FChronicle_CinematicExporter.h"
 #include "Data/UChronicle_ExportInfo.h"
 
@@ -50,5 +51,24 @@ TArray<FChronicle_CinematicEntry> UChronicle_CinematicFunctionLibrary::GetAll()
 
 TSoftObjectPtr<UWorld> UChronicle_CinematicFunctionLibrary::ToWorldPointer(const FString Path)
 {
-	return TSoftObjectPtr<UWorld>(FSoftObjectPath(Path));
+	return FChronicle_CinematicBlueprintUtilities::ToWorldPointer(Path);
+}
+
+void UChronicle_CinematicFunctionLibrary::InitSequence(
+	ULevelSequence* LevelSequence,
+	const UChronicle_CinematicData* CinematicData,
+	const FChronicle_SequenceData& SequenceData
+)
+{
+	FChronicle_CinematicBlueprintUtilities::InitSequence(LevelSequence, CinematicData, SequenceData);
+}
+
+UBlueprint* UChronicle_CinematicFunctionLibrary::CreateBlueprintFromParent(
+	UClass* ParentClass,
+	const FString& PackagePath,
+	const FString& BlueprintName,
+	const UChronicle_CinematicData* Data
+)
+{
+	return FChronicle_CinematicBlueprintUtilities::CreateBlueprintFromParent(ParentClass, PackagePath, BlueprintName, Data);
 }

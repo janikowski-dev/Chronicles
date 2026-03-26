@@ -12,5 +12,5 @@ struct FChronicle_CharacterModel
 	FGuid Id = FGuid::NewGuid();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftClassPtr<ASkeletalMeshActor> Model;
+	TSoftObjectPtr<USkeletalMesh> Model;
 };

@@ -37,4 +37,19 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
 	static TSoftObjectPtr<UWorld> ToWorldPointer(const FString Path);
+	
+	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
+	static void InitSequence(
+		ULevelSequence* LevelSequence,
+		const UChronicle_CinematicData* CinematicData,
+		const FChronicle_SequenceData& SequenceData
+	);
+	
+	UFUNCTION(BlueprintCallable, Category = "Chronicle|Cinematics")
+	static UBlueprint* CreateBlueprintFromParent(
+	    UClass* ParentClass,
+	    const FString& PackagePath,
+	    const FString& BlueprintName,
+	    const UChronicle_CinematicData* Data
+	);
 };

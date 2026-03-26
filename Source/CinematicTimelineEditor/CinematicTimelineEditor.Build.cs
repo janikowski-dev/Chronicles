@@ -14,13 +14,20 @@ public class CinematicTimelineEditor : ModuleRules
 		
 		PrivateDependencyModuleNames.AddRange([
 			"ChronicleCore",
+			"CharacterSystemEditor",
 			"LevelSequence",
 			"AssetRegistry",
 			"ToolMenus",
 			"Slate",
 			"SlateCore",
 			"DeveloperSettings",
-			"UnrealEd"
+			"UnrealEd",
+			"CinematicCamera",
+			"LevelSequenceEditor",
+			"MovieSceneTracks",
+			"MovieSceneTools",
+			"Sequencer",
+			"MovieScene"
 		]);
 	}
 }
