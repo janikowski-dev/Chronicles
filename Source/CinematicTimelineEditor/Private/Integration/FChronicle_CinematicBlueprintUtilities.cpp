@@ -16,7 +16,7 @@
 
 FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::InitSequence(
 	ULevelSequence* LevelSequence,
-	const UChronicle_CinematicData* CinematicData,
+	UChronicle_CinematicData* CinematicData,
 	const FChronicle_SequenceData& SequenceData
 )
 {
@@ -28,11 +28,10 @@ FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::InitSequence(
 		PopulateCameraCutTrack(MovieScene, Info);
 		PopulateAudioTrack(MovieScene, Info);
 		ApplyInfo(MovieScene, Info);
-		
+		ApplyChanges(LevelSequence, CinematicData, SequenceData);
 		return ConvertToRuntimeInfo(LevelSequence, Info, CinematicData, SequenceData);
 	}
 
-	ApplyChanges(LevelSequence);
 	return {};
 }
 
@@ -400,12 +399,47 @@ FGuid FChronicle_CinematicBlueprintUtilities::AddModel(
 	return MeshGuid;
 }
 
-void FChronicle_CinematicBlueprintUtilities::ApplyChanges(const ULevelSequence* LevelSequence)
+void FChronicle_CinematicBlueprintUtilities::ApplyChanges(
+	ULevelSequence* LevelSequence,
+	UChronicle_CinematicData* CinematicData,
+	const FChronicle_SequenceData& SequenceData
+)
 {
 	if (!LevelSequence)
 	{
 		return;
 	}
-	
+
 	LevelSequence->MarkPackageDirty();
+
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+	SaveArgs.Error = GError;
+
+	const FString LevelSequenceFileName = FPackageName::LongPackageNameToFilename(
+		LevelSequence->GetPackage()->GetName(),
+		FPackageName::GetAssetPackageExtension()
+	);
+
+	UPackage::SavePackage(LevelSequence->GetPackage(), LevelSequence, *LevelSequenceFileName, SaveArgs);
+	
+	for (FChronicle_SequenceData& SequencesData : CinematicData->SequencesData)
+	{
+		if (SequencesData.Id != SequenceData.Id)
+		{
+			continue;
+		}
+
+		SequencesData.Sequence = TSoftObjectPtr<ULevelSequence>(FSoftObjectPath(LevelSequence));
+		break;
+	}
+	
+	CinematicData->MarkPackageDirty();
+
+	const FString PackageFileName = FPackageName::LongPackageNameToFilename(
+		CinematicData->GetPackage()->GetName(),
+		FPackageName::GetAssetPackageExtension()
+	);
+
+	UPackage::SavePackage(CinematicData->GetPackage(), CinematicData, *PackageFileName, SaveArgs);
 }

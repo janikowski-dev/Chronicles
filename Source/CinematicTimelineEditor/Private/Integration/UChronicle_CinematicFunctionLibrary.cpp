@@ -67,7 +67,7 @@ TSoftObjectPtr<UWorld> UChronicle_CinematicFunctionLibrary::ToWorldPointer(const
 
 FChronicle_SequenceInfo UChronicle_CinematicFunctionLibrary::InitSequence(
 	ULevelSequence* LevelSequence,
-	const UChronicle_CinematicData* CinematicData,
+	UChronicle_CinematicData* CinematicData,
 	const FChronicle_SequenceData& SequenceData
 )
 {

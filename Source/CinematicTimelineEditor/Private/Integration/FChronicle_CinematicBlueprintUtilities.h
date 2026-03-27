@@ -37,7 +37,7 @@ public:
 
 	static FChronicle_SequenceInfo InitSequence(
 		ULevelSequence* LevelSequence,
-		const UChronicle_CinematicData* CinematicData,
+		UChronicle_CinematicData* CinematicData,
 		const FChronicle_SequenceData& SequenceData
 	);
 
@@ -82,5 +82,9 @@ private:
 		const FTransform& SpawnTransform
 	);
 	
-	static void ApplyChanges(const ULevelSequence* LevelSequence);
+	static void ApplyChanges(
+		ULevelSequence* LevelSequence,
+		UChronicle_CinematicData* CinematicData,
+		const FChronicle_SequenceData& SequenceData
+	);
 };

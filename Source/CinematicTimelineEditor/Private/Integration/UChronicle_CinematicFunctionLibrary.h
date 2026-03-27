@@ -48,7 +48,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
 	static FChronicle_SequenceInfo InitSequence(
 		ULevelSequence* LevelSequence,
-		const UChronicle_CinematicData* CinematicData,
+		UChronicle_CinematicData* CinematicData,
 		const FChronicle_SequenceData& SequenceData
 	);
 	

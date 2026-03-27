@@ -1,9 +1,11 @@
 ﻿#pragma once
 
-#include "UChronicle_DialogueExporterMediator.generated.h"
+#include "Assets/UChronicle_DialogueAsset.h"
+#include "Data/UChronicle_DialogueData.h"
+#include "UChronicle_DialogueFunctionLibrary.generated.h"
 
 UCLASS()
-class DIALOGUESYSTEMEDITOR_API UChronicle_DialogueExporterMediator : public UBlueprintFunctionLibrary
+class DIALOGUESYSTEMEDITOR_API UChronicle_DialogueFunctionLibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 
