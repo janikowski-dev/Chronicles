@@ -1,6 +1,6 @@
 #pragma once
 
-class FDialogueSystemEditorModule : public IModuleInterface
+class FChronicle_DialogueSystemEditorModule : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override;

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Data/UChronicle_CinematicData.h"
-#include "UChronicle_DialogueData.h"
+#include "Data/UChronicle_DialogueData.h"
 
 class FChronicle_CinematicExporter
 {

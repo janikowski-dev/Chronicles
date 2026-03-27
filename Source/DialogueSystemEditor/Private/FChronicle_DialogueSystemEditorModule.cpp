@@ -1,4 +1,4 @@
-#include "FDialogueSystemEditorModule.h"
+#include "FChronicle_DialogueSystemEditorModule.h"
 
 #include "AssetToolsModule.h"
 #include "EdGraphUtilities.h"
@@ -9,7 +9,7 @@
 
 #define LOCTEXT_NAMESPACE "FDialogueSystemModule"
 
-void FDialogueSystemEditorModule::StartupModule()
+void FChronicle_DialogueSystemEditorModule::StartupModule()
 {
 	FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get().RegisterAdvancedAssetCategory(
 		FName("Chronicle"),
@@ -25,11 +25,11 @@ void FDialogueSystemEditorModule::StartupModule()
 	FChronicle_EditorStyle::Initialize();
 }
 
-void FDialogueSystemEditorModule::ShutdownModule()
+void FChronicle_DialogueSystemEditorModule::ShutdownModule()
 {
 	FChronicle_EditorStyle::Shutdown();
 }
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FDialogueSystemEditorModule, DialogueSystemEditor)
+IMPLEMENT_MODULE(FChronicle_DialogueSystemEditorModule, DialogueSystemEditor)

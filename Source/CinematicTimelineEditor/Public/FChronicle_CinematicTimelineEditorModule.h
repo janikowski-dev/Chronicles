@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class FCinematicTimelineEditorModule : public IModuleInterface
+class FChronicle_CinematicTimelineEditorModule : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override;

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "UChronicle_DialogueData.h"
+#include "Data/UChronicle_DialogueData.h"
 #include "Data/FChronicle_CinematicEntry.h"
 #include "Data/UChronicle_CinematicData.h"
 #include "UChronicle_CinematicFunctionLibrary.generated.h"

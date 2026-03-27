@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "EChronicle_RuleParameterType.h"
+#include "Data/EChronicle_RuleParameterType.h"
 
 struct FChronicle_RuleGraph_AddNode : FEdGraphSchemaAction
 {

@@ -19,9 +19,6 @@ public:
 	TArray<FChronicle_SequenceData> SequencesData;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UWorld> Level;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FGuid> ParticipantIds;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

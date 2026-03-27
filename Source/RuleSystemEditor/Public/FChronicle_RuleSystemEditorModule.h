@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class FChronicleCoreModule : public IModuleInterface
+class FChronicle_RuleSystemEditorModule : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override;

@@ -1,5 +1,5 @@
-﻿#include "FChronicle_DialogueExporter.h"
-#include "UChronicle_DialogueExporterMediator.h"
+﻿#include "UChronicle_DialogueExporterMediator.h"
+#include "FChronicle_DialogueExporter.h"
 
 UChronicle_DialogueData* UChronicle_DialogueExporterMediator::ConvertToData(const UChronicle_DialogueAsset* Asset)
 {

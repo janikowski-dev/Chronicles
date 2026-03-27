@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "FChronicle_DialogueNodeData.h"
+#include "Data/FChronicle_DialogueNodeData.h"
 #include "Nodes/Unreal/UChronicle_DialogueRootNode.h"
 
 class UChronicle_DialogueData;

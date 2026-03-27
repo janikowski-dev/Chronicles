@@ -20,6 +20,16 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
+        {
+            "Name": "CinematicTimeline",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        },
+        {
+            "Name": "CinematicTimelineEditor",
+            "Type": "Editor",
+            "LoadingPhase": "Default"
+        },
 		{
 			"Name": "DialogueSystemEditor",
 			"Type": "Editor",
@@ -32,11 +42,6 @@
 		},
 		{
 			"Name": "CharacterSystemEditor",
-			"Type": "Editor",
-			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "CinematicTimelineEditor",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
 		}

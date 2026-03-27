@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "EChronicle_RuleParameterType.h"
+#include "Data/EChronicle_RuleParameterType.h"
 #include "UChronicle_RuleNode.h"
 #include "UChronicle_RuleInputNode.generated.h"
 

@@ -4,7 +4,7 @@
 #include "UChronicle_CoreFunctionLibrary.generated.h"
 
 UCLASS()
-class CHRONICLECORE_API UChronicle_CoreFunctionLibrary : public UBlueprintFunctionLibrary
+class CINEMATICTIMELINE_API UChronicle_CoreFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	

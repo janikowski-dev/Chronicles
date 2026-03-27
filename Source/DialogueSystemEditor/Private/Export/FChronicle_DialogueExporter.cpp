@@ -15,7 +15,7 @@
 #include "Nodes/Unreal/UChronicle_RuleNotNode.h"
 #include "Nodes/Unreal/UChronicle_RuleOrNode.h"
 #include "Nodes/Unreal/UChronicle_RuleOutputNode.h"
-#include "UChronicle_DialogueData.h"
+#include "Data/UChronicle_DialogueData.h"
 #include "Windows/WindowsPlatformApplicationMisc.h"
 
 UChronicle_DialogueData* FChronicle_DialogueExporter::ConvertToData(const UChronicle_DialogueAsset* Asset)

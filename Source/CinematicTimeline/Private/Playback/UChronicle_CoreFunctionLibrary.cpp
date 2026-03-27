@@ -14,24 +14,27 @@ void UChronicle_CoreFunctionLibrary::OffsetSpawnableTransforms(
     }
 
     ULevelSequence* LevelSequence = Cast<ULevelSequence>(LevelSequenceActor->GetSequence());
+    
     if (!LevelSequence)
     {
         return;
     }
 
     UMovieScene* MovieScene = LevelSequence->GetMovieScene();
+    
     if (!MovieScene)
     {
         return;
     }
 
     ULevelSequencePlayer* Player = LevelSequenceActor->GetSequencePlayer();
+    
     if (!Player)
     {
         return;
     }
 
-    for (int32 i = 0; i < MovieScene->GetSpawnableCount(); i++)
+    for (int i = 0; i < MovieScene->GetSpawnableCount(); i++)
     {
         const FMovieSceneSpawnable& Spawnable = MovieScene->GetSpawnable(i);
         TArray<UObject*> BoundObjects = Player->GetBoundObjects(FMovieSceneObjectBindingID(Spawnable.GetGuid()));
@@ -39,6 +42,7 @@ void UChronicle_CoreFunctionLibrary::OffsetSpawnableTransforms(
         for (UObject* BoundObject : BoundObjects)
         {
             AActor* Actor = Cast<AActor>(BoundObject);
+            
             if (!Actor)
             {
                 continue;

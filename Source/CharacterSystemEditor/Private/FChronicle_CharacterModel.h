@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "Animation/SkeletalMeshActor.h"
 #include "FChronicle_CharacterModel.generated.h"
 
 USTRUCT(BlueprintType)

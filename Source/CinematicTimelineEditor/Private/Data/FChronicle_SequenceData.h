@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "LevelSequence.h"
-#include "FChronicle_DialogueNodeData.h"
+#include "Data/FChronicle_DialogueNodeData.h"
 #include "FChronicle_SequenceData.generated.h"
 
 USTRUCT(BlueprintType)

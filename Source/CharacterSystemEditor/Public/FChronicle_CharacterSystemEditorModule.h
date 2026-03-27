@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class FCharacterSystemEditorModule : public IModuleInterface
+class FChronicle_CharacterSystemEditorModule : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override;

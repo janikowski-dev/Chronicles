@@ -9,11 +9,7 @@ public class ChronicleCore : ModuleRules
 		PublicDependencyModuleNames.AddRange([
 			"Core",
 			"CoreUObject",
-			"Engine",
-			"LevelSequence",
-			"MovieScene",
-			"MovieSceneTracks",
-			"CinematicCamera"
+			"Engine"
 		]);
 		
 		PrivateDependencyModuleNames.AddRange([]);

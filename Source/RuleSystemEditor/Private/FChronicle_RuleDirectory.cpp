@@ -1,7 +1,7 @@
 ﻿#include "FChronicle_RuleDirectory.h"
 
 #include "FChronicle_RuleSet.h"
-#include "EChronicle_RuleParameterType.h"
+#include "Data/EChronicle_RuleParameterType.h"
 #include "UChronicle_RuleSettings.h"
 
 FChronicle_RuleSet FChronicle_RuleDirectory::RawConditionSet;
