@@ -14,6 +14,17 @@ UChronicle_CinematicData* UChronicle_CinematicFunctionLibrary::ConvertToCinemati
 	return FChronicle_CinematicExporter::ConvertToCinematicData(Asset);
 }
 
+FChronicle_DialogueInfo UChronicle_CinematicFunctionLibrary::Get(const FGuid& DialogueInfoId)
+{
+	return GetMutableDefault<UChronicle_ExportInfo>()->Get(DialogueInfoId);
+}
+
+void UChronicle_CinematicFunctionLibrary::Override(const FGuid& DialogueInfoId, const FChronicle_SequenceInfo& SequenceInfo)
+{
+	GetMutableDefault<UChronicle_ExportInfo>()->Override(DialogueInfoId, SequenceInfo);
+	GetMutableDefault<UChronicle_ExportInfo>()->SaveConfig();
+}
+
 void UChronicle_CinematicFunctionLibrary::UpdateStatus(const FString Path, const EChronicle_CinematicAssetExportStatus Status)
 {
 	GetMutableDefault<UChronicle_ExportInfo>()->UpdateStatus(Path, Status);
@@ -54,21 +65,21 @@ TSoftObjectPtr<UWorld> UChronicle_CinematicFunctionLibrary::ToWorldPointer(const
 	return FChronicle_CinematicBlueprintUtilities::ToWorldPointer(Path);
 }
 
-void UChronicle_CinematicFunctionLibrary::InitSequence(
+FChronicle_SequenceInfo UChronicle_CinematicFunctionLibrary::InitSequence(
 	ULevelSequence* LevelSequence,
 	const UChronicle_CinematicData* CinematicData,
 	const FChronicle_SequenceData& SequenceData
 )
 {
-	FChronicle_CinematicBlueprintUtilities::InitSequence(LevelSequence, CinematicData, SequenceData);
+	return FChronicle_CinematicBlueprintUtilities::InitSequence(LevelSequence, CinematicData, SequenceData);
 }
 
 UBlueprint* UChronicle_CinematicFunctionLibrary::CreateBlueprintFromParent(
 	UClass* ParentClass,
 	const FString& PackagePath,
 	const FString& BlueprintName,
-	const UChronicle_CinematicData* Data
+	const FChronicle_DialogueInfo& Info
 )
 {
-	return FChronicle_CinematicBlueprintUtilities::CreateBlueprintFromParent(ParentClass, PackagePath, BlueprintName, Data);
+	return FChronicle_CinematicBlueprintUtilities::CreateBlueprintFromParent(ParentClass, PackagePath, BlueprintName, Info);
 }

@@ -2,6 +2,7 @@
 
 #include "Data/UChronicle_DialogueData.h"
 #include "Data/FChronicle_CinematicEntry.h"
+#include "Data/FChronicle_DialogueInfo.h"
 #include "Data/UChronicle_CinematicData.h"
 #include "UChronicle_CinematicFunctionLibrary.generated.h"
 
@@ -16,6 +17,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
 	static UChronicle_CinematicData* ConvertToCinematicData(const UChronicle_DialogueData* Asset);
+	
+	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
+	static FChronicle_DialogueInfo Get(const FGuid& DialogueInfoId);
+	
+	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
+	static void Override(const FGuid& DialogueInfoId, const FChronicle_SequenceInfo& SequenceInfo);
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
 	static void UpdateStatus(FString Path, EChronicle_CinematicAssetExportStatus Status);
@@ -39,7 +46,7 @@ public:
 	static TSoftObjectPtr<UWorld> ToWorldPointer(const FString Path);
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
-	static void InitSequence(
+	static FChronicle_SequenceInfo InitSequence(
 		ULevelSequence* LevelSequence,
 		const UChronicle_CinematicData* CinematicData,
 		const FChronicle_SequenceData& SequenceData
@@ -50,6 +57,6 @@ public:
 	    UClass* ParentClass,
 	    const FString& PackagePath,
 	    const FString& BlueprintName,
-	    const UChronicle_CinematicData* Data
+		const FChronicle_DialogueInfo& Info
 	);
 };

@@ -13,6 +13,7 @@ public class CinematicTimeline : ModuleRules
 		]);
 		
 		PrivateDependencyModuleNames.AddRange([
+			"ChronicleCore",
 			"LevelSequence",
 			"MovieScene",
 			"MovieSceneTracks",

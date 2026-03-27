@@ -6,6 +6,47 @@ FName UChronicle_ExportInfo::GetCategoryName() const
 	return TEXT("Chronicle");
 }
 
+FChronicle_DialogueInfo UChronicle_ExportInfo::Get(const FGuid& DialogueInfoId)
+{
+	FChronicle_DialogueInfo* MatchingInfo = Infos.FindByPredicate([&DialogueInfoId](const FChronicle_DialogueInfo& Entry)
+	{
+		return DialogueInfoId == Entry.Id;
+	});
+
+	if (!MatchingInfo)
+	{
+		return {};
+	}
+
+	return *MatchingInfo;
+}
+
+void UChronicle_ExportInfo::Override(const FGuid& DialogueInfoId, const FChronicle_SequenceInfo& SequenceInfo)
+{
+	FChronicle_DialogueInfo* MatchingInfo = Infos.FindByPredicate([&DialogueInfoId](const FChronicle_DialogueInfo& Entry)
+	{
+		return DialogueInfoId == Entry.Id;
+	});
+
+	if (!MatchingInfo)
+	{
+		FChronicle_DialogueInfo NewInfo;
+		NewInfo.Id = DialogueInfoId;
+
+		if (SequenceInfo.bIsEntrySequence)
+		{
+			NewInfo.EntrySequenceId = SequenceInfo.Id;
+		}
+		
+		Infos.Add(NewInfo);
+		
+		MatchingInfo = &Infos.Last();
+	}
+
+	MatchingInfo->SequencesById.Remove(SequenceInfo.Id);
+	MatchingInfo->SequencesById.Add(SequenceInfo.Id, SequenceInfo);
+}
+
 void UChronicle_ExportInfo::UpdateStatus(const FString& Path, const EChronicle_CinematicAssetExportStatus Status)
 {
 	FChronicle_CinematicEntry* MatchingEntry = Entries.FindByPredicate([Path](const FChronicle_CinematicEntry& Entry)

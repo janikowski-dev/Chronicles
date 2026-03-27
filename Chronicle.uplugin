@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "0.2.0",
 	"FriendlyName": "Chronicle",
-	"Description": "Narration-driven game toolkit: dialogue graphs, asset-driven rules, character management, quest system and cinematic timeline.",
+	"Description": "Narration-driven game toolkit: dialogue graphs, rules management, character management, and cinematic timeline.",
 	"Category": "Tools",
 	"CreatedBy": "Adam Janikowski",
 	"CreatedByURL": "https://github.com/janikowski-dev",
@@ -45,5 +45,11 @@
 			"Type": "Editor",
 			"LoadingPhase": "Default"
 		}
-	]
+    ],
+    "Plugins": [
+        {
+            "Name": "LevelSequenceEditor",
+            "Enabled": true
+        }
+    ]
 }
