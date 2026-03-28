@@ -16,7 +16,7 @@
 
 ### Set up a particular dialogue
 
-![Dialogue System Overview](../Assets/Dialogue_System_Overview.png)
+![Dialogue System Overview](../Assets/Cinematic_Timeline_Overview.png)
 
 1. Assign character models to dialogue participants
 
