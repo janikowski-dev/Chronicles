@@ -91,8 +91,10 @@ This allows you to quickly inspect dialogue logic without opening each node indi
 
 ### Create a dialogue
 
-1. Right-click in the **Content Browser**
-2. Select **Chronicle -> Dialogue Asset**
+1. Create folder **/Game/Dialogues/{Organization_Directory}**
+2. Right-click inside the folder
+3. Select **Chronicle -> Dialogue Asset**
+4. Name it **DIA_{Dialogue_Name}**
 
 ### Modify a dialogue
 

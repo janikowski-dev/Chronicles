@@ -22,6 +22,10 @@
 
 To integrate with runtime systems, use **FChronicle_RuleDirectory** methods. These class provides a structured way to define and access rules at runtime, ensuring consistent behavior across your dialogue system.
 
+## Inner Integrations
+
+Cinematic Timeline is integrated out of the box with Rule System.
+
 ## Planned Features
 
 - **Validator** – Detect conflicts or unused rules
