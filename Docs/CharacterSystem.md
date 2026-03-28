@@ -17,10 +17,15 @@
 
 1. Each character has a **unique GUID** for identification
 2. Modify its **name** in the field
+3. Add **models** that can be used by the character for cinematic sequences
 
 ## Integration
 
 To integrate with runtime systems, use **FChronicle_CharacterDirectory** methods. That class provides a structured way to access rules at runtime, ensuring consistent behavior across your dialogue system.
+
+## Inner Integrations
+
+Cinematic Timeline is integrated out of the box with Character System.
 
 ## Planned Features
 

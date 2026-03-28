@@ -1,16 +1,16 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "0.2.0",
+	"VersionName": "0.3.0",
 	"FriendlyName": "Chronicle",
-	"Description": "Narration-driven game toolkit: dialogue graphs, asset-driven rules, character management, quest system and cinematic timeline.",
+	"Description": "Narration-driven game toolkit: dialogue graphs, rules management, character management, and cinematic timeline.",
 	"Category": "Tools",
 	"CreatedBy": "Adam Janikowski",
 	"CreatedByURL": "https://github.com/janikowski-dev",
 	"DocsURL": "https://github.com/janikowski-dev/chronicle",
 	"MarketplaceURL": "",
 	"SupportURL": "https://github.com/janikowski-dev/chronicle/issues",
-	"CanContainContent": false,
+	"CanContainContent": true,
 	"IsBetaVersion": true,
 	"IsExperimentalVersion": false,
 	"Installed": false,
@@ -20,20 +20,36 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
+        {
+            "Name": "CinematicTimeline",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        },
+        {
+            "Name": "CinematicTimelineEditor",
+            "Type": "Editor",
+            "LoadingPhase": "Default"
+        },
 		{
 			"Name": "DialogueSystemEditor",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
 		},
+		{
+			"Name": "RuleSystemEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "CharacterSystemEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+    ],
+    "Plugins": [
         {
-          "Name": "RuleSystemEditor",
-          "Type": "Editor",
-          "LoadingPhase": "Default"
-        },
-        {
-          "Name": "CharacterSystemEditor",
-          "Type": "Editor",
-          "LoadingPhase": "Default"
+            "Name": "LevelSequenceEditor",
+            "Enabled": true
         }
-	]
+    ]
 }

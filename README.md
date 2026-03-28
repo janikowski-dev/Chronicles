@@ -2,7 +2,7 @@
   <img src="Assets/Logo.png" />
 </p>
 
-**Chronicle** is an Unreal Engine plugin for building narrative-driven games. It gives developers a visual way to create branching dialogues, hook up game logic through a rule system, and eventually manage characters, quests, and cinematic timelines - all from within the editor.
+**Chronicle** is an Unreal Engine plugin for building narrative-driven games. It gives developers a visual way to create branching dialogues, hook up game logic through a rule system, manage characters, and cinematic timelines - all from within the editor.
 
 ## Modules
 
@@ -13,6 +13,12 @@ Chronicle is divided into separate modules for clarity and easier maintenance. E
 ![Dialogue System Overview](Assets/Dialogue_System_Overview.png)
 
 [See full Dialogue System documentation →](Docs/DialogueSystem.md)
+
+### Cinematic Timeline
+
+![Cinematic Timeline Overview](Assets/Cinematic_Timeline_Overview.png)
+
+[See full Cinematic Timeline documentation →](Docs/CinematicTimeline.md)
 
 ### Rule System
 
@@ -26,13 +32,15 @@ Chronicle is divided into separate modules for clarity and easier maintenance. E
 
 [See full Character System documentation →](Docs/CharacterSystem.md)
 
-## Roadmap
+## Roadmap (ish)
 
-Future planned modules and features for Chronicle:
+Planned features for Chronicle in no particular order:
 
-1. **Cinematic Timeline** – in-editor cutscenes and timeline management
-2. **JSON export/import** - to make localization easier
-3. **Quest Editor** – asset-based quests and branching objectives
+- Extending Cinematic Timeline (animations support, more fancy sequences generation, flow debugger)
+- Nice looking UI for Rules and Characters setup
+- Rules resolving runtime system
+- More restrictive Dialogue Graphs creation (to prevent setup errors)
+- Localization support
 
 ## Installation
 

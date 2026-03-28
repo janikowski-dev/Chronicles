@@ -59,7 +59,7 @@ void FChronicle_DialogueAsset_Actions::GetActions(const TArray<UObject*>& InObje
 			{
 				if (const UChronicle_DialogueAsset* Asset = Cast<UChronicle_DialogueAsset>(Object))
 				{
-					FChronicle_DialogueExporter::ExportToAsset(Asset);
+					FChronicle_DialogueExporter::ExportToData(Asset);
 				}
 			}
 		}))
@@ -75,7 +75,7 @@ void FChronicle_DialogueAsset_Actions::GetActions(const TArray<UObject*>& InObje
 			{
 				if (const UChronicle_DialogueAsset* Asset = Cast<UChronicle_DialogueAsset>(Object))
 				{
-					FChronicle_DialogueExporter::CopyToClipboard(Asset);
+					FChronicle_DialogueExporter::ExportJsonToClipboard(Asset);
 				}
 			}
 		}))

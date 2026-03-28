@@ -22,5 +22,5 @@ public:
 	UPROPERTY()
 	FText Text;
 	UPROPERTY()
-	FGuid ListenerId;
+	FGuid SpeakerId;
 };

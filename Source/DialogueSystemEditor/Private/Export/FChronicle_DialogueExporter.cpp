@@ -15,23 +15,32 @@
 #include "Nodes/Unreal/UChronicle_RuleNotNode.h"
 #include "Nodes/Unreal/UChronicle_RuleOrNode.h"
 #include "Nodes/Unreal/UChronicle_RuleOutputNode.h"
-#include "UChronicle_DialogueData.h"
+#include "Data/UChronicle_DialogueData.h"
 #include "Windows/WindowsPlatformApplicationMisc.h"
 
-void FChronicle_DialogueExporter::CopyToClipboard(const UChronicle_DialogueAsset* Asset)
+UChronicle_DialogueData* FChronicle_DialogueExporter::ConvertToData(const UChronicle_DialogueAsset* Asset)
 {
-    FString JsonString;
-    FJsonObjectConverter::UStructToJsonObjectString(UChronicle_DialogueData::StaticClass(), ConvertToTemporaryAsset(Asset), JsonString);
+    return ConvertToData_Internal(Asset);
+}
+
+FString FChronicle_DialogueExporter::ConvertToJson(const UChronicle_DialogueAsset* Asset)
+{
+    return ConvertToJson_Internal(Asset);
+}
+
+void FChronicle_DialogueExporter::ExportJsonToClipboard(const UChronicle_DialogueAsset* Asset)
+{
+    const FString JsonString = ConvertToJson_Internal(Asset);
     FPlatformApplicationMisc::ClipboardCopy(*JsonString);
     UE_LOG(LogTemp, Log, TEXT("Copied dialogue to clipboard!"));
 }
 
-void FChronicle_DialogueExporter::ExportToAsset(const UChronicle_DialogueAsset* Asset)
+void FChronicle_DialogueExporter::ExportToData(const UChronicle_DialogueAsset* Asset)
 {
-    FAssetRegistryModule::AssetCreated(ConvertToAsset(Asset));
+    FAssetRegistryModule::AssetCreated(ConvertToData_Internal(Asset));
 }
 
-UChronicle_DialogueData* FChronicle_DialogueExporter::ConvertToAsset(const UChronicle_DialogueAsset* Asset)
+UChronicle_DialogueData* FChronicle_DialogueExporter::ConvertToData_Internal(const UChronicle_DialogueAsset* Asset)
 {
     const FString AssetName = FString::Printf(TEXT("%s_Data"), *Asset->GetName());
     UPackage* Package = CreatePackage(*(FPackageName::GetLongPackagePath(Asset->GetOutermost()->GetName()) / AssetName));
@@ -40,7 +49,14 @@ UChronicle_DialogueData* FChronicle_DialogueExporter::ConvertToAsset(const UChro
     return Data;
 }
 
-UChronicle_DialogueData* FChronicle_DialogueExporter::ConvertToTemporaryAsset(const UChronicle_DialogueAsset* Asset)
+FString FChronicle_DialogueExporter::ConvertToJson_Internal(const UChronicle_DialogueAsset* Asset)
+{
+    FString JsonString;
+    FJsonObjectConverter::UStructToJsonObjectString(UChronicle_DialogueData::StaticClass(), ConvertToTemporaryData(Asset), JsonString);
+    return JsonString;
+}
+
+UChronicle_DialogueData* FChronicle_DialogueExporter::ConvertToTemporaryData(const UChronicle_DialogueAsset* Asset)
 {
     UChronicle_DialogueData* Data = NewObject<UChronicle_DialogueData>(GetTransientPackage());
     ReadData(Asset, Data);
@@ -60,12 +76,8 @@ void FChronicle_DialogueExporter::ReadData(const UChronicle_DialogueAsset* Asset
 
 FChronicle_DialogueNodeData FChronicle_DialogueExporter::ReadNodeData(UChronicle_DialogueNode* Node)
 {
-    if (!TryGetLinkNodeTarget(Node))
-    {
-        return {};
-    }
-    
     FChronicle_DialogueNodeData NodeData;
+    ReadLinkData(Node, NodeData);
     ReadSharedData(Node, NodeData);
     ReadType(Node,NodeData);
     ReadRoles(Node, NodeData);
@@ -83,24 +95,20 @@ void FChronicle_DialogueExporter::TryReadRootData(UChronicle_DialogueData* Data,
     }
 }
 
-void FChronicle_DialogueExporter::ReadNodeData(UChronicle_DialogueData* Data, const FChronicle_DialogueNodeData& NodeData)
-{
-    Data->Nodes.Add(NodeData);
-}
-
-bool FChronicle_DialogueExporter::TryGetLinkNodeTarget(UChronicle_DialogueNode*& Node)
+void FChronicle_DialogueExporter::ReadLinkData(UEdGraphNode* Node, FChronicle_DialogueNodeData& NodeData)
 {
     if (const UChronicle_DialogueLinkNode* LinkNode = Cast<UChronicle_DialogueLinkNode>(Node))
     {
-        Node = LinkNode->GetLinkedNode();
-        
-        if (!Node)
+        if (LinkNode->GetLinkedNode())
         {
-            return false;
+            NodeData.LinkTargetId = LinkNode->GetLinkedNode()->Id;
         }
     }
-    
-    return true;
+}
+
+void FChronicle_DialogueExporter::ReadNodeData(UChronicle_DialogueData* Data, const FChronicle_DialogueNodeData& NodeData)
+{
+    Data->Nodes.Add(NodeData);
 }
 
 void FChronicle_DialogueExporter::ReadSharedData(const UChronicle_DialogueNode* Node, FChronicle_DialogueNodeData& NodeData)
@@ -123,6 +131,10 @@ void FChronicle_DialogueExporter::ReadType(const UChronicle_DialogueNode* Node, 
     {
         NodeData.Type = EChronicle_DialogueNodeType::Line;
     }
+    else if (Cast<UChronicle_DialogueLinkNode>(Node))
+    {
+        NodeData.Type = EChronicle_DialogueNodeType::Link;
+    }
 }
 
 void FChronicle_DialogueExporter::ReadRoles(UChronicle_DialogueNode* Node, FChronicle_DialogueNodeData& NodeData)
@@ -135,7 +147,7 @@ void FChronicle_DialogueExporter::ReadRoles(UChronicle_DialogueNode* Node, FChro
     
     if (const UChronicle_DialogueResponseNode* ResponseNode = Cast<UChronicle_DialogueResponseNode>(Node))
     {
-        NodeData.ListenerId = ResponseNode->ListenerId;
+        NodeData.SpeakerId = ResponseNode->SpeakerId;
     }
 }
 
@@ -234,8 +246,8 @@ void FChronicle_DialogueExporter::ReadChildren(UChronicle_DialogueNode* Node, FC
         
         for (const UEdGraphPin* Linked : Pin->LinkedTo)
         {
-            const UChronicle_DialogueNode* Response = Cast<UChronicle_DialogueNode>(Linked->GetOwningNode());
-            NodeData.Children.Add(Response->Id);
+            const UChronicle_DialogueNode* Child = Cast<UChronicle_DialogueNode>(Linked->GetOwningNode());
+            NodeData.Children.Add(Child->Id);
         }
     }
 }

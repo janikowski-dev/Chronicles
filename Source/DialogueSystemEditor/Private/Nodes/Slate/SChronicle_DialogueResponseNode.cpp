@@ -38,7 +38,7 @@ void SChronicle_DialogueResponseNode::AddBody(const TSharedRef<SVerticalBox>& Bo
 	[
 		FChronicle_SlateHelper::MakeCharacterDisplay(
 			FChronicle_EditorStyle::Get().GetBrush("Icons.Speaker"),
-			FText::FromName(FChronicle_CharacterDirectory::GetAll().GetName(TypedNode->ListenerId))
+			FText::FromName(FChronicle_CharacterDirectory::GetAll().GetName(TypedNode->SpeakerId))
 		)
 	];
 	
@@ -80,12 +80,12 @@ void SChronicle_DialogueResponseNode::OpenNodeEditor() const
 
 void SChronicle_DialogueResponseNode::FixAssignedId() const
 {
-	const bool bHasListener = TypedGraph->SharedParticipantIds.ContainsByPredicate([this](const TSharedPtr<FGuid>& Id)
+	const bool bHasSpeaker = TypedGraph->SharedParticipantIds.ContainsByPredicate([this](const TSharedPtr<FGuid>& Id)
 	{
-		return Id && *Id == TypedNode->ListenerId;
+		return Id && *Id == TypedNode->SpeakerId;
 	});
 	
-	if (bHasListener)
+	if (bHasSpeaker)
 	{
 		return;
 	}
@@ -95,5 +95,5 @@ void SChronicle_DialogueResponseNode::FixAssignedId() const
 		return FChronicle_CharacterDirectory::GetPlayable().IsValid(*Id);
 	});
 
-	TypedNode->ListenerId = PlayerId ? **PlayerId : FGuid();
+	TypedNode->SpeakerId = PlayerId ? **PlayerId : FGuid();
 }

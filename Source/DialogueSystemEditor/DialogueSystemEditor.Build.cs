@@ -28,8 +28,6 @@ public class DialogueSystemEditor : ModuleRules
 			"ToolMenus",
 			"InputCore",
 			"WorkspaceMenuStructure",
-			"GameplayTags",
-			"GameplayTagsEditor",
 			"EditorStyle",
 			"Projects",
 			"JsonUtilities",

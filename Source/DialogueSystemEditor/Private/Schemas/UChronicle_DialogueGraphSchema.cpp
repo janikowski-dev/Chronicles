@@ -99,8 +99,13 @@ void UChronicle_DialogueGraphSchema::AddLineContext(const UGraphNodeContextMenuC
 	}
 	
 	AddResponseAction(Context, Section);
-	AddLineAction(Context, Section);
-	AddLinkAction(Context, Section);
+
+	if (!HasChildOfType(Node, UChronicle_DialogueLineNode::StaticClass()) && !HasChildOfType(Node, UChronicle_DialogueLinkNode::StaticClass()))
+	{
+		AddLineAction(Context, Section);
+		AddLinkAction(Context, Section);
+	}
+	
 	AddDeleteAction(Context, Section);
 }
 

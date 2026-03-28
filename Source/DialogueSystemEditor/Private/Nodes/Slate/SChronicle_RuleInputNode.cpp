@@ -88,12 +88,14 @@ TSharedRef<SWidget> SChronicle_RuleInputNode::GetIntegerInputBody() const
 
 	+ SVerticalBox::Slot()
 	.AutoHeight()
+	.Padding(5.0f)
 	[
 		GetRuleSelectionBody()
 	]
     
 	+ SVerticalBox::Slot()
 	.AutoHeight()
+	.Padding(5.0f)
 	[
 		SNew(SNumericEntryBox<int32>)
 		.Value_Lambda([this]() -> TOptional<int32>
@@ -119,12 +121,14 @@ TSharedRef<SWidget> SChronicle_RuleInputNode::GetCharacterSelectionBody() const
 
 	+ SVerticalBox::Slot()
 	.AutoHeight()
+	.Padding(5.0f)
 	[
 		GetRuleSelectionBody()
 	]
     
 	+ SVerticalBox::Slot()
 	.AutoHeight()
+	.Padding(5.0f)
 	[
 		SNew(SComboBox<TSharedPtr<FGuid>>)
 		.OptionsSource(&CharacterIds)
