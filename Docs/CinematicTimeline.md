@@ -8,7 +8,7 @@
 
 ![Cinematic Timeline Manager](../Assets/Cinematic_Timeline_Manager.png)
 
-1. Open the **Cinematic Timeline Manager**
+1. Open the **Cinematic Timeline Manager** (Tools/Cinematic Manager)
 2. Export the Dialogue Graphs you want to use as cinematic sequences
 3. Click on the link icon of an exported dialogue to open it in the **Dialogue Timeline Editor**
 
