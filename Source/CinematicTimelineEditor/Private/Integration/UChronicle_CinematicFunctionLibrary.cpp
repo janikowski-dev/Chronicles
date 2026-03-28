@@ -60,11 +60,6 @@ TArray<FChronicle_CinematicEntry> UChronicle_CinematicFunctionLibrary::GetAll()
 	return GetDefault<UChronicle_ExportInfo>()->Entries;
 }
 
-TSoftObjectPtr<UWorld> UChronicle_CinematicFunctionLibrary::ToWorldPointer(const FString Path)
-{
-	return FChronicle_CinematicBlueprintUtilities::ToWorldPointer(Path);
-}
-
 FChronicle_SequenceInfo UChronicle_CinematicFunctionLibrary::InitSequence(
 	ULevelSequence* LevelSequence,
 	UChronicle_CinematicData* CinematicData,

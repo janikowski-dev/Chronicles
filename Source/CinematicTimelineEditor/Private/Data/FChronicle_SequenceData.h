@@ -23,4 +23,7 @@ struct CINEMATICTIMELINEEDITOR_API FChronicle_SequenceData
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<FGuid> BranchSequenceIds;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bIsEntrySequence;
 };

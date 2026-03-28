@@ -79,6 +79,13 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
         return;
     }
 
+    FGuid FirstRootChildId;
+
+    if (!Root->Children.IsEmpty())
+    {
+        FirstRootChildId = Root->Children[0];
+    }
+
     struct FTraversalState
     {
         const FChronicle_DialogueNodeData* Node;
@@ -279,5 +286,10 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
     for (auto& Pair : SequenceMap)
     {
         Output->SequencesData.Add(MoveTemp(Pair.Value));
+    }
+    
+    for (FChronicle_SequenceData& Sequence : Output->SequencesData)
+    {
+        Sequence.bIsEntrySequence = Sequence.Nodes.Num() > 0 && FirstRootChildId == Sequence.Nodes[0].Id;
     }
 }

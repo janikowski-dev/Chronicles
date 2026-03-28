@@ -26,8 +26,6 @@ struct CINEMATICTIMELINEEDITOR_API FSequenceInfo
 class CINEMATICTIMELINEEDITOR_API FChronicle_CinematicBlueprintUtilities
 {
 public:
-	static TSoftObjectPtr<UWorld> ToWorldPointer(const FString Path);
-	
 	static UBlueprint* CreateBlueprintFromParent(
 		UClass* ParentClass,
 		const FString& PackagePath,
@@ -53,7 +51,6 @@ private:
 	);
 	
 	static FSequenceInfo ConvertToInfo(
-		ULevelSequence* LevelSequence,
 		UMovieScene* MovieScene,
 		const UChronicle_CinematicData* CinematicData,
 		const FChronicle_SequenceData& SequenceData
@@ -70,13 +67,11 @@ private:
 	);
 	
 	static FGuid AddCamera(
-		ULevelSequence* LevelSequence,
 		UMovieScene* MovieScene,
 		const FTransform& SpawnTransform
 	);
 	
 	static FGuid AddModel(
-		ULevelSequence* LevelSequence,
 		UMovieScene* MovieScene,
 		USkeletalMesh* SkeletalMesh,
 		const FTransform& SpawnTransform

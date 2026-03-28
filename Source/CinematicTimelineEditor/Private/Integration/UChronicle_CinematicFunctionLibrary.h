@@ -43,9 +43,6 @@ public:
 	static TArray<FChronicle_CinematicEntry> GetAll();
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
-	static TSoftObjectPtr<UWorld> ToWorldPointer(const FString Path);
-	
-	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
 	static FChronicle_SequenceInfo InitSequence(
 		ULevelSequence* LevelSequence,
 		UChronicle_CinematicData* CinematicData,

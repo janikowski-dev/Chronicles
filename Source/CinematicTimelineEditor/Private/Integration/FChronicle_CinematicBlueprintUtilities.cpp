@@ -24,7 +24,7 @@ FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::InitSequence(
 	
 	if (TryGetMovieScene(LevelSequence, MovieScene))
 	{
-		const FSequenceInfo Info = ConvertToInfo(LevelSequence, MovieScene, CinematicData, SequenceData);
+		const FSequenceInfo Info = ConvertToInfo(MovieScene, CinematicData, SequenceData);
 		PopulateCameraCutTrack(MovieScene, Info);
 		PopulateAudioTrack(MovieScene, Info);
 		ApplyInfo(MovieScene, Info);
@@ -33,11 +33,6 @@ FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::InitSequence(
 	}
 
 	return {};
-}
-
-TSoftObjectPtr<UWorld> FChronicle_CinematicBlueprintUtilities::ToWorldPointer(const FString Path)
-{
-	return TSoftObjectPtr<UWorld>(FSoftObjectPath(Path));
 }
 
 UBlueprint* FChronicle_CinematicBlueprintUtilities::CreateBlueprintFromParent(
@@ -150,19 +145,8 @@ FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToRuntime
 	}
 
 	RuntimeInfo.Sequence = TSoftObjectPtr<ULevelSequence>(FSoftObjectPath(LevelSequence));
-	RuntimeInfo.bIsEntrySequence = false;
+	RuntimeInfo.bIsEntrySequence = SequenceData.bIsEntrySequence;
 	RuntimeInfo.Id = SequenceInfo.Id;
-
-	for (FChronicle_DialogueNodeData Node : SequenceData.Nodes)
-	{
-		if (Node.Type != EChronicle_DialogueNodeType::Root)
-		{
-			continue;
-		}
-
-		RuntimeInfo.bIsEntrySequence = true;
-		break;
-	}
 
 	if (SequenceData.NextNodeId != FGuid())
 	{
@@ -170,9 +154,9 @@ FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToRuntime
 
 		for (FChronicle_SequenceData OtherData : CinematicData->SequencesData)
 		{
-			const FChronicle_DialogueNodeData* MatchingNode = SequenceData.Nodes.FindByPredicate([OtherData](const FChronicle_DialogueNodeData& Node)
+			const FChronicle_DialogueNodeData* MatchingNode = OtherData.Nodes.FindByPredicate([SequenceData](const FChronicle_DialogueNodeData& Node)
 			{
-				return OtherData.Id == Node.Id;
+				return SequenceData.NextNodeId == Node.Id;
 			});
 
 			if (!MatchingNode)
@@ -190,11 +174,13 @@ FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToRuntime
 		RuntimeInfo.Transitions.Add(Transition);
 	}
 
-	for (FGuid SequenceId : SequenceData.BranchSequenceIds)
+	for (FGuid SequenceOrNodeId : SequenceData.BranchSequenceIds)
 	{
+		bool bFoundSequence = false;
+		
 		for (FChronicle_SequenceData OtherData : CinematicData->SequencesData)
 		{
-			if (SequenceId != OtherData.Id)
+			if (SequenceOrNodeId != OtherData.Id)
 			{
 				continue;
 			}
@@ -203,17 +189,54 @@ FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToRuntime
 
 			Transition.Type = EChronicle_TransitionType::Response;
 			Transition.Rules = OtherData.Nodes[0].Rules;
-			Transition.SequenceId = SequenceId;
+			Transition.NodeId = OtherData.Nodes[0].Id;
+			Transition.SequenceId = SequenceOrNodeId;
 			
 			RuntimeInfo.Transitions.Add(Transition);
+			bFoundSequence = true;
+			break;
 		}
+
+		if (!bFoundSequence)
+		{
+			FChronicle_TransitionInfo Transition;
+
+			for (FChronicle_SequenceData OtherData : CinematicData->SequencesData)
+			{
+				const FChronicle_DialogueNodeData* MatchingNode = OtherData.Nodes.FindByPredicate([SequenceOrNodeId](const FChronicle_DialogueNodeData& Node)
+				{
+					return SequenceOrNodeId == Node.Id;
+				});
+
+				if (!MatchingNode)
+				{
+					continue;
+				}
+			
+				Transition.Type = EChronicle_TransitionType::AutoContinue;
+				Transition.Rules = MatchingNode->Rules;
+				Transition.SequenceId = OtherData.Id;
+				Transition.NodeId = SequenceOrNodeId;
+				break;
+			}
+		
+			RuntimeInfo.Transitions.Add(Transition);
+		}
+	}
+
+	if (RuntimeInfo.Transitions.IsEmpty())
+	{
+		FChronicle_TransitionInfo Transition;
+		
+		Transition.Type = EChronicle_TransitionType::Game;
+		
+		RuntimeInfo.Transitions.Add(Transition);
 	}
 	
 	return RuntimeInfo;
 }
 
 FSequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToInfo(
-	ULevelSequence* LevelSequence,
 	UMovieScene* MovieScene,
 	const UChronicle_CinematicData* CinematicData,
 	const FChronicle_SequenceData& SequenceData
@@ -232,7 +255,7 @@ FSequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToInfo(
 		const FFrameNumber FrameDuration = (SoundDuration * TickResolution).FloorToFrame();
 
 		TrackInfo.Sound = CinematicData->SoundsByLine[Node.Id];
-		TrackInfo.StartFrame = FFrameNumber(FrameCounter);
+		TrackInfo.StartFrame = FrameCounter;
 		TrackInfo.EndFrame = FrameDuration + FrameCounter;
 		TrackInfo.ParticipantId = Node.SpeakerId;
 		TrackInfo.Id = Node.Id;
@@ -246,41 +269,35 @@ FSequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToInfo(
 	SequenceInfo.Id = SequenceData.Id;
 	
 	const int ParticipantCount = CinematicData->ParticipantIds.Num();
-
+	
 	for (int i = 0; i < ParticipantCount; i++)
 	{
-		constexpr float Radius = 200.0f;
+		constexpr float Radius = 350.0f;
 		const FGuid& ParticipantId = CinematicData->ParticipantIds[i];
-    
+
 		const float Angle = 2.0f * PI * i / ParticipantCount;
 		const FVector Position(FMath::Cos(Angle) * Radius, FMath::Sin(Angle) * Radius, 0.0f);
-    
-		SequenceInfo.TransformByParticipantIds.Add(ParticipantId, FTransform(Position));
+
+		const FVector DirectionToCenter = (FVector::ZeroVector - Position).GetSafeNormal();
+		const FRotator LookAtRotation = FRotator(0.0f, DirectionToCenter.Rotation().Yaw - 90.0f, 0.0f);
+
+		SequenceInfo.TransformByParticipantIds.Add(ParticipantId, FTransform(LookAtRotation, Position));
 	}
 
 	for (const FGuid& ParticipantId : CinematicData->ParticipantIds)
 	{
-		for (const FTrackInfo& Track : SequenceInfo.Tracks)
-		{
-			if (Track.ParticipantId != ParticipantId)
-			{
-				continue;
-			}
+		const FTransform* ParticipantTransform = SequenceInfo.TransformByParticipantIds.Find(ParticipantId);
+		const FVector ParticipantLocation = ParticipantTransform->GetLocation();
+		const FVector CameraLocation = FVector::ZeroVector;
+		const FRotator CameraRotation = (ParticipantLocation - CameraLocation).Rotation();
+		const FTransform CameraTransform(CameraRotation, CameraLocation);
 
-			const FTransform* ParticipantTransform = SequenceInfo.TransformByParticipantIds.Find(ParticipantId);
-			const FVector ParticipantLocation = ParticipantTransform->GetLocation();
-			const FVector CameraLocation = FVector::ZeroVector;
-			const FRotator CameraRotation = (ParticipantLocation - CameraLocation).Rotation();
-			const FTransform CameraTransform(CameraRotation, CameraLocation);
+		FGuid CameraId = AddCamera(MovieScene, CameraTransform);
+		SequenceInfo.CameraIdByParticipantIds.Add(ParticipantId, CameraId);
 
-			FGuid CameraId = AddCamera(LevelSequence, MovieScene, CameraTransform);
-			SequenceInfo.CameraIdByParticipantIds.Add(ParticipantId, CameraId);
-
-			USkeletalMesh* SkeletalMesh = CinematicData->ActorsById[Track.ParticipantId].LoadSynchronous();
-			FGuid ModelId = AddModel(LevelSequence, MovieScene, SkeletalMesh, *ParticipantTransform);
-			SequenceInfo.ModelIdByParticipantIds.Add(ParticipantId, ModelId);
-			break;
-		}
+		USkeletalMesh* SkeletalMesh = CinematicData->ActorsById[ParticipantId].LoadSynchronous();
+		FGuid ModelId = AddModel(MovieScene, SkeletalMesh, *ParticipantTransform);
+		SequenceInfo.ModelIdByParticipantIds.Add(ParticipantId, ModelId);
 	}
 	
 	return SequenceInfo;
@@ -334,26 +351,22 @@ void FChronicle_CinematicBlueprintUtilities::PopulateAudioTrack(
 }
 
 FGuid FChronicle_CinematicBlueprintUtilities::AddCamera(
-	ULevelSequence* LevelSequence,
 	UMovieScene* MovieScene,
 	const FTransform& SpawnTransform
 )
 {
-	UWorld* World = GEditor->GetEditorWorldContext().World();
-    
-	if (!World)
-	{
-		return {};
-	}
+	ACineCameraActor* TmpTemplate = NewObject<ACineCameraActor>(
+		MovieScene,
+		ACineCameraActor::StaticClass(),
+		MakeUniqueObjectName(MovieScene, ACineCameraActor::StaticClass()),
+		RF_NoFlags
+	);
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.ObjectFlags &= ~RF_Transactional;
-	ACineCameraActor* CameraActor = World->SpawnActor<ACineCameraActor>(SpawnParams);
-	CameraActor->SetActorTransform(SpawnTransform);
+	FTransform AdjustedTransform = SpawnTransform;
+	AdjustedTransform.SetLocation(SpawnTransform.GetLocation() + FVector(0.0f, 0.0f, 150.0f));
+	TmpTemplate->SetActorTransform(AdjustedTransform);
 
-	FActorLabelUtilities::SetActorLabelUnique(CameraActor, TEXT("Camera"));
-
-	const FGuid CameraGuid = MovieSceneHelpers::TryCreateCustomSpawnableBinding(LevelSequence, CameraActor);
+	const FGuid CameraGuid = MovieScene->AddSpawnable(TEXT("Camera"), *TmpTemplate);
 
 	if (UMovieSceneSpawnTrack* SpawnTrack = MovieScene->AddTrack<UMovieSceneSpawnTrack>(CameraGuid))
 	{
@@ -361,33 +374,26 @@ FGuid FChronicle_CinematicBlueprintUtilities::AddCamera(
 		SpawnTrack->AddSection(*SpawnTrack->CreateNewSection());
 	}
 
-	World->DestroyActor(CameraActor);
 	return CameraGuid;
 }
 
 FGuid FChronicle_CinematicBlueprintUtilities::AddModel(
-	ULevelSequence* LevelSequence,
 	UMovieScene* MovieScene,
-    USkeletalMesh* SkeletalMesh,
+	USkeletalMesh* SkeletalMesh,
 	const FTransform& SpawnTransform
 )
 {
-	UWorld* World = GEditor->GetEditorWorldContext().World();
-    
-	if (!World)
-	{
-		return {};
-	}
+	ASkeletalMeshActor* TmpTemplate = NewObject<ASkeletalMeshActor>(
+		MovieScene,
+		ASkeletalMeshActor::StaticClass(),
+		MakeUniqueObjectName(MovieScene, ASkeletalMeshActor::StaticClass()),
+		RF_NoFlags
+	);
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.ObjectFlags &= ~RF_Transactional;
-	ASkeletalMeshActor* MeshActor = World->SpawnActor<ASkeletalMeshActor>(SpawnParams);
-	MeshActor->SetActorTransform(SpawnTransform);
-	MeshActor->GetSkeletalMeshComponent()->SetSkeletalMesh(SkeletalMesh);
+	TmpTemplate->GetSkeletalMeshComponent()->SetSkeletalMesh(SkeletalMesh);
+	TmpTemplate->SetActorTransform(SpawnTransform);
 
-	FActorLabelUtilities::SetActorLabelUnique(MeshActor, SkeletalMesh->GetName());
-
-	const FGuid MeshGuid = MovieSceneHelpers::TryCreateCustomSpawnableBinding(LevelSequence, MeshActor);
+	const FGuid MeshGuid = MovieScene->AddSpawnable(*SkeletalMesh->GetName(), *TmpTemplate);
 
 	if (UMovieSceneSpawnTrack* SpawnTrack = MovieScene->AddTrack<UMovieSceneSpawnTrack>(MeshGuid))
 	{
@@ -395,7 +401,6 @@ FGuid FChronicle_CinematicBlueprintUtilities::AddModel(
 		SpawnTrack->AddSection(*SpawnTrack->CreateNewSection());
 	}
 
-	World->DestroyActor(MeshActor);
 	return MeshGuid;
 }
 
