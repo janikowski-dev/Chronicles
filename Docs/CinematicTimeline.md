@@ -29,7 +29,7 @@
 
 Once a dialogue is fully set up, a runtime actor is generated automatically.
 
-The naming follows a fixed convention — if the source Dialogue Asset was named **DIA_EntrySpeech**, the generated runtime actor will be named **CIN_EntrySpeech**.
+The naming follows a fixed convention - if the source Dialogue Asset was named **DIA_EntrySpeech**, the generated runtime actor will be named **CIN_EntrySpeech**.
 
 To use it:
 
