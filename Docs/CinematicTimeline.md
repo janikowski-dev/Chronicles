@@ -6,21 +6,21 @@
 
 ### Manage dialogues
 
-![Cinematic Timeline Manager](Assets/Cinematic_Timeline_Manager.png)
+![Cinematic Timeline Manager](../Assets/Cinematic_Timeline_Manager.png)
 
 1. Open the **Cinematic Timeline Manager**
 2. Export the Dialogue Graphs you want to use as cinematic sequences
 3. Click on the link icon of an exported dialogue to open it in the **Dialogue Timeline Editor**
 
-> To learn about Dialogue Graph creation, refer to the [Dialogue System Documentation](Docs/DialogueSystem.md).
+> To learn about Dialogue Graph creation, refer to the [Dialogue System Documentation](../Docs/DialogueSystem.md).
 
 ### Set up a particular dialogue
 
-![Dialogue System Overview](Assets/Dialogue_System_Overview.png)
+![Dialogue System Overview](../Assets/Dialogue_System_Overview.png)
 
 1. Assign character models to dialogue participants
 
-> To learn about characters and their models, refer to the [Character System Documentation](Docs/CharacterSystem.md).
+> To learn about characters and their models, refer to the [Character System Documentation](../Docs/CharacterSystem.md).
 
 2. Assign voiceovers to individual lines - only sound assets prefixed with **VO_** will be available
 3. Use the navigation buttons to follow the dialogue flow and verify the setup
