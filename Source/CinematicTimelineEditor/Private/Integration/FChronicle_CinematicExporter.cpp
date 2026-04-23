@@ -198,9 +198,9 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
         {
         case EChronicle_DialogueNodeType::Root:
         {
-            for (const FGuid& ChildId : Current->Children)
+            for (int i = Current->Children.Num() - 1; i >= 0; --i)
             {
-                TryPushChild(Stack, ChildId, {}, FGuid(), false);
+                TryPushChild(Stack, Current->Children[i], {}, FGuid(), false);
             }
             break;
         }
@@ -259,14 +259,14 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
 
                 FGuid FlushedId = FlushSequence(State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
 
-                for (const FGuid& ChildId : LineChildren)
+                for (int i = LineChildren.Num() - 1; i >= 0; --i)
                 {
-                    TryPushChild(Stack, ChildId, {}, FlushedId, false);
+                    TryPushChild(Stack, LineChildren[i], {}, FlushedId, false);
                 }
 
-                for (const FGuid& ChildId : OtherChildren)
+                for (int i = OtherChildren.Num() - 1; i >= 0; --i)
                 {
-                    TryPushChild(Stack, ChildId, {}, FlushedId, true);
+                    TryPushChild(Stack, OtherChildren[i], {}, FlushedId, true);
                 }
             }
             break;
@@ -274,9 +274,9 @@ void FChronicle_CinematicExporter::PopulateOutput(const UChronicle_DialogueData*
 
         default:
         {
-            for (const FGuid& ChildId : Current->Children)
+            for (int i = Current->Children.Num() - 1; i >= 0; --i)
             {
-                TryPushChild(Stack, ChildId, State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
+                TryPushChild(Stack, Current->Children[i], State.AccumulatedNodes, State.ParentSequenceId, State.bIsBranch);
             }
             break;
         }

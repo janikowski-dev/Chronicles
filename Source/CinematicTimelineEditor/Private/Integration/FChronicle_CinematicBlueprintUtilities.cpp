@@ -49,13 +49,9 @@ UBlueprint* FChronicle_CinematicBlueprintUtilities::CreateBlueprintFromParent(
 
 	const FString FullPath = PackagePath / BlueprintName;
 	UPackage* Package = CreatePackage(*FullPath);
-	UBlueprint* Blueprint;
-
-	if (UObject* ExistingObj = StaticFindObject(UBlueprint::StaticClass(), Package, *BlueprintName))
-	{
-		Blueprint = Cast<UBlueprint>(ExistingObj);
-	}
-	else
+	UBlueprint* Blueprint = LoadObject<UBlueprint>(Package, *BlueprintName);
+	
+	if (!Blueprint)
 	{
 		Blueprint = FKismetEditorUtilities::CreateBlueprint(
 			ParentClass,
