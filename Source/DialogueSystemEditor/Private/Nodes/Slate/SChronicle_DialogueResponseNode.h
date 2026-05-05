@@ -21,6 +21,8 @@ protected:
 private:
 	FText GetText() const;
 	void SetText(const FText& NewText, ETextCommit::Type) const;
+	FText GetSubtitle() const;
+	void SetSubtitle(const FText& NewText, ETextCommit::Type) const;
 	void OpenNodeEditor() const;
 	void FixAssignedId() const;
 };

@@ -25,6 +25,8 @@ public:
 	void RemoveParticipant(const TSharedPtr<FGuid>& Id);
 	
 private:
+	bool RemoveInvalidInnerGraphs();
+	
 	void ApplyLayout() const;
 	void IndexLines() const;
 	

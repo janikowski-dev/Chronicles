@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "AChronicle_CharacterActor.h"
 #include "Data/FChronicle_DialogueInfo.h"
 #include "Data/FChronicle_SequenceInfo.h"
 #include "Data/UChronicle_CinematicData.h"
@@ -31,7 +32,9 @@ public:
 		const FString& PackagePath,
 		const FString& BlueprintName,
 		const FChronicle_DialogueInfo& Info,
-		const FTransform& ResponseTransform
+		const FTransform& ResponseTransform,
+		const TArray<FTransform>& CameraTransforms,
+		const TArray<FTransform>& ParticipantTransforms
 	);
 
 	static FChronicle_SequenceInfo InitSequence(
@@ -74,7 +77,7 @@ private:
 	
 	static FGuid AddModel(
 		UMovieScene* MovieScene,
-		USkeletalMesh* SkeletalMesh,
+		TSoftClassPtr<AChronicle_CharacterActor> CharacterClass,
 		const FTransform& SpawnTransform
 	);
 	

@@ -21,45 +21,42 @@ AChronicle_ShotSetupActor::AChronicle_ShotSetupActor()
     DebugMesh = CreateEditorOnlyDefaultSubobject<UStaticMeshComponent>(TEXT("DebugMesh"));
     DebugMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     DebugMesh->SetupAttachment(RootComponent);
+    DebugMesh->SetHiddenInGame(true);
 }
 
 void AChronicle_ShotSetupActor::PostInitProperties()
 {
     Super::PostInitProperties();
-
-    const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(TEXT("Chronicle"));
-    const FString PackagePath = FString::Printf(TEXT("/%s/Gizmos/Cross.Cross"), *Plugin->GetName());
-    
-    if (UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr,PackagePath))
-    {
-        DebugMesh->SetStaticMesh(Mesh);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("DebugMesh: debug mesh not found"));
-    }
+    AssignDebugMesh();
 }
 
 void AChronicle_ShotSetupActor::ExportToDataAsset() const
 {
+    AChronicle_CameraPoint* ResponseCamera;
     TArray<AChronicle_CameraPoint*> Cameras;
     TArray<AChronicle_ParticipantPoint*> Participants;
-    CollectAttachedPoints(Cameras, Participants);
+    TArray<AActor*> Attached;
+    
+    GetAttachedActors(Attached);
+    CollectAttachedPoints(Attached, Cameras, Participants, ResponseCamera);
+    ExportToDataAsset(Cameras, Participants, ResponseCamera);
+}
 
-    const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(TEXT("Chronicle"));
-
-    const FString AssetName = PresetName.IsEmpty() ? TEXT("NewShotPreset") : PresetName;
-    const FString PackagePath = FString::Printf(TEXT("/%s/Presets/%s"), *Plugin->GetName(), *AssetName);
-
-    UPackage* Package = CreatePackage(*PackagePath);
-
-    if (FindObject<UChronicle_ShotPresetData>(Package, *AssetName))
+void AChronicle_ShotSetupActor::ExportToDataAsset(
+    TArray<AChronicle_CameraPoint*>& Cameras,
+    TArray<AChronicle_ParticipantPoint*>& Participants,
+    AChronicle_CameraPoint*& ResponseCamera
+) const
+{
+    if (PresetName.IsEmpty())
     {
-        UE_LOG(LogTemp, Warning, TEXT("ShotSetupActor: Preset '%s' already exists. Rename PresetName to save a new one."), *AssetName);
         return;
     }
+    
+    const FString PackagePath = FString::Printf(TEXT("/Game/Cinematics/Presets/%s"), *PresetName);
+    UPackage* Package = CreatePackage(*PackagePath);
 
-    UChronicle_ShotPresetData* NewAsset = NewObject<UChronicle_ShotPresetData>(Package, *AssetName, RF_Public | RF_Standalone | RF_MarkAsRootSet);
+    UChronicle_ShotPresetData* NewAsset = NewObject<UChronicle_ShotPresetData>(Package, *PresetName, RF_Public | RF_Standalone | RF_MarkAsRootSet);
 
     for (const AChronicle_CameraPoint* Camera : Cameras)
     {
@@ -79,6 +76,8 @@ void AChronicle_ShotSetupActor::ExportToDataAsset() const
         }
     }
 
+    NewAsset->ResponseCameraTransform = ResponseCamera->GetRootComponent()->GetRelativeTransform();
+
     FAssetRegistryModule::AssetCreated(NewAsset);
     Package->MarkPackageDirty();
 
@@ -89,20 +88,42 @@ void AChronicle_ShotSetupActor::ExportToDataAsset() const
     UPackage::SavePackage(Package, NewAsset, *PackageFilename, SaveArgs);
 }
 
-void AChronicle_ShotSetupActor::CollectAttachedPoints(TArray<AChronicle_CameraPoint*>& OutCameras, TArray<AChronicle_ParticipantPoint*>& OutParticipants) const
+void AChronicle_ShotSetupActor::CollectAttachedPoints(
+    TArray<AActor*> InAttached,
+    TArray<AChronicle_CameraPoint*>& OutCameras,
+    TArray<AChronicle_ParticipantPoint*>& OutParticipants,
+    AChronicle_CameraPoint*& OutResponseCamera
+) const
 {
-    TArray<AActor*> Attached;
-    GetAttachedActors(Attached);
-
-    for (AActor* Actor : Attached)
+    for (AActor* Actor : InAttached)
     {
         if (AChronicle_CameraPoint* Camera = Cast<AChronicle_CameraPoint>(Actor))
         {
+            if (Camera->bIsResponseCamera)
+            {
+                OutResponseCamera = Camera;
+            }
+            
             OutCameras.Add(Camera);
         }
         else if (AChronicle_ParticipantPoint* Participant = Cast<AChronicle_ParticipantPoint>(Actor))
         {
             OutParticipants.Add(Participant);
         }
+    }
+}
+
+void AChronicle_ShotSetupActor::AssignDebugMesh() const
+{
+    const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(TEXT("Chronicle"));
+    const FString PackagePath = FString::Printf(TEXT("/%s/Gizmos/Cross.Cross"), *Plugin->GetName());
+    
+    if (UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr,PackagePath))
+    {
+        DebugMesh->SetStaticMesh(Mesh);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("DebugMesh: debug mesh not found"));
     }
 }

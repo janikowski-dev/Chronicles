@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "FChronicle_SequenceData.h"
+#include "AChronicle_CharacterActor.h"
 #include "Setup/UChronicle_ShotPresetData.h"
 #include "UChronicle_CinematicData.generated.h"
 
@@ -12,11 +13,16 @@ class CINEMATICTIMELINEEDITOR_API UChronicle_CinematicData : public UDataAsset
 public:
 	UChronicle_CinematicData()
 	{
+		if (Id.IsValid())
+		{
+			return;
+		}
+		
 		Id = FGuid::NewGuid();
 	}
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TMap<FGuid, TSoftObjectPtr<USkeletalMesh>> ActorsById;
+	TMap<FGuid, TSoftClassPtr<AChronicle_CharacterActor>> ActorsById;
 	
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TMap<FGuid, TSoftObjectPtr<USoundBase>> SoundsByLine;

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "Data/UChronicle_EmotionAsset.h"
 #include "UChronicle_DialogueNode.generated.h"
 
 class UChronicle_RuleGraph;
@@ -15,6 +16,8 @@ public:
 	
 	virtual FText GetTitle() const;
 	virtual FText GetText() const;
+	virtual FText GetSubtitle() const;
+	virtual bool QualifiesForInnerGraph() const;
 	
 	UChronicle_RuleGraph* GetOrCreateInnerGraph();
 	UChronicle_RuleGraph* GetInnerGraph() const;
@@ -23,6 +26,8 @@ private:
 	void AssignId();
 	
 public:
+	UPROPERTY()
+	TSoftObjectPtr<UChronicle_EmotionAsset> Emotion;
 	UPROPERTY()
 	bool bIsCollapsed = false;
 	UPROPERTY()

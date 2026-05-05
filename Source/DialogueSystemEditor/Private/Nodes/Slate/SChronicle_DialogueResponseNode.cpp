@@ -41,6 +41,15 @@ void SChronicle_DialogueResponseNode::AddBody(const TSharedRef<SVerticalBox>& Bo
 			FText::FromName(FChronicle_CharacterDirectory::GetAll().GetName(TypedNode->SpeakerId))
 		)
 	];
+
+	Box->AddSlot()
+	.AutoHeight()
+	[
+		FChronicle_SlateHelper::MakeSingleLineTextField(
+			TAttribute<FText>(this, &SChronicle_DialogueResponseNode::GetSubtitle),
+			FOnTextCommitted::CreateSP(this, &SChronicle_DialogueResponseNode::SetSubtitle)
+		)
+	];
 	
 	Box->AddSlot()
 	.AutoHeight()
@@ -62,6 +71,18 @@ void SChronicle_DialogueResponseNode::SetText(const FText& NewText, ETextCommit:
 	UChronicle_DialogueResponseNode* Node = CastChecked<UChronicle_DialogueResponseNode>(GraphNode);
 	Node->Modify();
 	Node->Text = NewText;
+}
+
+FText SChronicle_DialogueResponseNode::GetSubtitle() const
+{
+	return CastChecked<UChronicle_DialogueResponseNode>(GraphNode)->Subtitle;
+}
+
+void SChronicle_DialogueResponseNode::SetSubtitle(const FText& NewText, ETextCommit::Type) const
+{
+	UChronicle_DialogueResponseNode* Node = CastChecked<UChronicle_DialogueResponseNode>(GraphNode);
+	Node->Modify();
+	Node->Subtitle = NewText;
 }
 
 void SChronicle_DialogueResponseNode::OpenNodeEditor() const

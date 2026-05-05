@@ -34,6 +34,7 @@ void SChronicle_RuleInputNode::UpdateGraphNode()
 				.Padding(4)
 				[
 					SNew(STextBlock)
+					.Font(FCoreStyle::GetDefaultFontStyle("Bold", 10))
 					.Text(TypedNode->GetTitle())
 				]
 			]

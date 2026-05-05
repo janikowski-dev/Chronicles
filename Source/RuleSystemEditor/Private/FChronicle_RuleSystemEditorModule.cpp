@@ -2,7 +2,7 @@
 
 #include "FChronicle_RuleDirectory.h"
 
-#define LOCTEXT_NAMESPACE "FRuleSystemModule"
+#define LOCTEXT_NAMESPACE "ChronicleRuleSystemEditorModule"
 
 void FChronicle_RuleSystemEditorModule::StartupModule()
 {

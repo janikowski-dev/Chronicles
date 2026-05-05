@@ -15,6 +15,7 @@ public class CinematicTimelineEditor : ModuleRules
 		PrivateDependencyModuleNames.AddRange([
 			"ChronicleCore",
 			"CinematicTimeline",
+			"CharacterSystem",
 			"CharacterSystemEditor",
 			"LevelSequence",
 			"AssetRegistry",

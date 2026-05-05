@@ -1,31 +1,17 @@
 ﻿#include "AChronicle_CameraPoint.h"
 
-#include "Interfaces/IPluginManager.h"
+#include "CineCameraComponent.h"
 
-AChronicle_CameraPoint::AChronicle_CameraPoint()
+AChronicle_CameraPoint::AChronicle_CameraPoint(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	if (UCineCameraComponent* Camera = GetCineCameraComponent())
+	{
+		Camera->CurrentFocalLength = 75.0f;
+		Camera->CurrentAperture = 2.8f;
+		Camera->Filmback.SensorWidth = 36.0f;
+		Camera->Filmback.SensorHeight = 20.25f;
+		Camera->FocusSettings.FocusMethod = ECameraFocusMethod::DoNotOverride;
+	}
+
 	PrimaryActorTick.bCanEverTick = false;
-	RootComponent = Root;
-
-	DebugMesh = CreateEditorOnlyDefaultSubobject<UStaticMeshComponent>(TEXT("DebugMesh"));
-    DebugMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	DebugMesh->SetupAttachment(RootComponent);
-}
-
-void AChronicle_CameraPoint::PostInitProperties()
-{
-	Super::PostInitProperties();
-
-	const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(TEXT("Chronicle"));
-	const FString PackagePath = FString::Printf(TEXT("/%s/Gizmos/Camera.Camera"), *Plugin->GetName());
-    
-	if (UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr,PackagePath))
-	{
-		DebugMesh->SetStaticMesh(Mesh);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("DebugMesh: debug mesh not found"));
-	}
 }

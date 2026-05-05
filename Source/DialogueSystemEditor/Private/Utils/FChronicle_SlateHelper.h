@@ -7,6 +7,11 @@ public:
 		const TAttribute<FText>& Getter,
 		const FOnTextCommitted& Setter
 	);
+	
+	static TSharedRef<SWidget> MakeSingleLineTextField(
+		const TAttribute<FText>& Getter,
+		const FOnTextCommitted& Setter
+	);
 
 	static TSharedRef<SWidget> MakeTextField(
 		const TAttribute<FText>& Getter

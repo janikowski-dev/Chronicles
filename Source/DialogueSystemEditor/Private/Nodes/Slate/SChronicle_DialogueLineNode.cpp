@@ -154,6 +154,11 @@ void SChronicle_DialogueLineNode::OpenNodeEditor() const
 {
 	if (UChronicle_DialogueNode* NodeAsset = Cast<UChronicle_DialogueNode>(GraphNode))
 	{
+		if (!NodeAsset->QualifiesForInnerGraph())
+		{
+			return;
+		}
+		
 		const TSharedRef<FChronicle_RuleEditor> Editor = MakeShared<FChronicle_RuleEditor>();
 
 		Editor->InitNodeAssetEditor(

@@ -55,6 +55,8 @@ public:
 	    const FString& PackagePath,
 	    const FString& BlueprintName,
 		const FChronicle_DialogueInfo& Info,
-		const FTransform& ResponseTransform
+		const FTransform& ResponseTransform,
+		const TArray<FTransform>& CameraTransforms,
+		const TArray<FTransform>& ParticipantTransforms
 	);
 };

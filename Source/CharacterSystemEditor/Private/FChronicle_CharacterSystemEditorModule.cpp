@@ -2,7 +2,7 @@
 
 #include "FChronicle_CharacterDirectory.h"
 
-#define LOCTEXT_NAMESPACE "FCharacterSystemModule"
+#define LOCTEXT_NAMESPACE "ChronicleCharacterSystemEditorModule"
 
 void FChronicle_CharacterSystemEditorModule::StartupModule()
 {

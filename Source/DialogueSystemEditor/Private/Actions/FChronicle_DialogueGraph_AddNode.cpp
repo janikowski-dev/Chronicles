@@ -1,5 +1,6 @@
 ﻿#include "FChronicle_DialogueGraph_AddNode.h"
 #include "EdGraph/EdGraph.h"
+#include "Nodes/Unreal/UChronicle_DialogueLineNode.h"
 #include "Graphs/UChronicle_DialogueGraph.h"
 
 UEdGraphNode* FChronicle_DialogueGraph_AddNode::PerformAction(
@@ -66,4 +67,34 @@ void FChronicle_DialogueGraph_AddNode::TryAttachingPin(
 		FromPin,
 		TargetPin
 	);
+
+	const UEdGraphNode* OwnerNode = FromPin->GetOwningNode();
+	
+	if (NewNode->IsA<UChronicle_DialogueLineNode>() && FromPin->LinkedTo.Num() > 1)
+	{
+		FromPin->Modify();
+
+		TArray<UEdGraphPin*>& Links = FromPin->LinkedTo;
+		int32 NewIndex = INDEX_NONE;
+
+		for (int32 i = 0; i < Links.Num(); ++i)
+		{
+			if (!Links[i] || Links[i]->GetOwningNode() != NewNode)
+			{
+				continue;
+			}
+			
+			NewIndex = i;
+			break;
+		}
+
+		if (NewIndex != INDEX_NONE)
+		{
+			UEdGraphPin* NewLink = Links[NewIndex];
+			Links.RemoveAt(NewIndex);
+			Links.Insert(NewLink, 0);
+		}
+
+		OwnerNode->GetGraph()->NotifyGraphChanged();
+	}
 }

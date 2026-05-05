@@ -24,12 +24,25 @@ public:
 
 public:
 	AChronicle_ShotSetupActor();
-	
+
 	virtual void PostInitProperties() override;
 
 	UFUNCTION(CallInEditor, BlueprintCallable, Category="Setup")
 	void ExportToDataAsset() const;
 
 private:
-	void CollectAttachedPoints(TArray<AChronicle_CameraPoint*>& OutCameras, TArray<AChronicle_ParticipantPoint*>& OutParticipants) const;
+	void ExportToDataAsset(
+		TArray<AChronicle_CameraPoint*>& Cameras,
+		TArray<AChronicle_ParticipantPoint*>& Participants,
+		AChronicle_CameraPoint*& ResponseCamera
+	) const;
+	
+	void CollectAttachedPoints(
+		TArray<AActor*> InAttached,
+		TArray<AChronicle_CameraPoint*>& OutCameras,
+		TArray<AChronicle_ParticipantPoint*>& OutParticipants,
+		AChronicle_CameraPoint*& OutResponseCamera
+	) const;
+
+	void AssignDebugMesh() const;
 };

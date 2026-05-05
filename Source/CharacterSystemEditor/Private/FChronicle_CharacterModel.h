@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "AChronicle_CharacterActor.h"
 #include "FChronicle_CharacterModel.generated.h"
 
 USTRUCT(BlueprintType)
@@ -11,5 +12,5 @@ struct FChronicle_CharacterModel
 	FGuid Id = FGuid::NewGuid();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<USkeletalMesh> Model;
+	TSoftClassPtr<AChronicle_CharacterActor> Model;
 };

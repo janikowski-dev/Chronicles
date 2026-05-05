@@ -42,34 +42,29 @@ void UChronicle_PlaybackFunctionLibrary::OffsetSpawnableTransforms(
     }
 }
 
-void UChronicle_PlaybackFunctionLibrary::OffsetCamera(
+void UChronicle_PlaybackFunctionLibrary::OffsetResponseCamera(
     const ALevelSequenceActor* LevelSequenceActor,
-    const FTransform& OwnerTransform,
-    const FTransform& ResponseTransform,
-    const float VerticalOffset,
-    const float ForwardOffset
+    const FTransform& ResponseCameraTransform,
+    const FVector& LocationOffset,
+    const FRotator& RotationOffset
 )
 {
     ULevelSequencePlayer* Player = LevelSequenceActor->GetSequencePlayer();
     const ULevelSequence* LevelSequence = Cast<ULevelSequence>(LevelSequenceActor->GetSequence());
     UMovieScene* MovieScene = LevelSequence->GetMovieScene();
-    
-    const FTransform WorldResponseTransform = ResponseTransform * OwnerTransform;
 
-    const FVector Forward = WorldResponseTransform.GetRotation().GetForwardVector();
-    const FVector ParticipantLocation = WorldResponseTransform.GetLocation();
-    const FVector CameraLocation = ParticipantLocation + Forward * ForwardOffset + FVector::UpVector * VerticalOffset;
-    const FVector LookAtTarget = ParticipantLocation + FVector::UpVector * VerticalOffset;
-    const FRotator CameraRotation = (LookAtTarget - CameraLocation).Rotation();
+    const FTransform ParentTransform(RotationOffset, LocationOffset);
 
     for (int i = 0; i < MovieScene->GetSpawnableCount(); i++)
     {
         const FMovieSceneSpawnable& Spawnable = MovieScene->GetSpawnable(i);
-        if (!Spawnable.GetObjectTemplate()->IsA<ACineCameraActor>()) continue;
+        
+        if (!Spawnable.GetObjectTemplate()->IsA<ACineCameraActor>())
+        {
+            continue;
+        }
 
-        TArray<UObject*> BoundObjects = Player->GetBoundObjects(
-            FMovieSceneObjectBindingID(Spawnable.GetGuid())
-        );
+        TArray<UObject*> BoundObjects = Player->GetBoundObjects(FMovieSceneObjectBindingID(Spawnable.GetGuid()));
 
         for (UObject* BoundObject : BoundObjects)
         {
@@ -80,7 +75,8 @@ void UChronicle_PlaybackFunctionLibrary::OffsetCamera(
                 continue;
             }
 
-            Actor->SetActorLocationAndRotation(CameraLocation, CameraRotation);
+            const FTransform WorldTransform = ResponseCameraTransform * ParentTransform;
+            Actor->SetActorTransform(WorldTransform);
         }
     }
 }

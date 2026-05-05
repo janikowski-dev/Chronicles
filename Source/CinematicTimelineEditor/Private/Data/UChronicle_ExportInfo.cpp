@@ -139,7 +139,6 @@ bool UChronicle_ExportInfo::AreEqual(const UChronicle_CinematicData* A, const UC
 				|| NodeA.Text != NodeB.Text
 				|| NodeA.SpeakerId != NodeB.SpeakerId
 				|| NodeA.ListenerId != NodeB.ListenerId
-				|| NodeA.Callbacks != NodeB.Callbacks
 				|| NodeA.Children != NodeB.Children
 			)
 			{
@@ -158,6 +157,21 @@ bool UChronicle_ExportInfo::AreEqual(const UChronicle_CinematicData* A, const UC
 					|| RuleA.ParameterInteger != RuleB.ParameterInteger
 					|| RuleA.Input != RuleB.Input
 					|| RuleA.Output != RuleB.Output
+				)
+				{
+					return false;
+				}
+			}
+
+			for (int32 K = 0; K < NodeA.Callbacks.Num(); K++)
+			{
+				const FChronicle_CallbackData& CallbackA = NodeA.Callbacks[K];
+				const FChronicle_CallbackData& CallbackB = NodeB.Callbacks[K];
+
+				if (CallbackA.Id != CallbackB.Id
+					|| CallbackA.ParameterType != CallbackB.ParameterType
+					|| CallbackA.ParameterCharacterId != CallbackB.ParameterCharacterId
+					|| CallbackA.ParameterInteger != CallbackB.ParameterInteger
 				)
 				{
 					return false;

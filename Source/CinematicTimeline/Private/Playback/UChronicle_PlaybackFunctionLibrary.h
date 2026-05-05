@@ -17,12 +17,11 @@ public:
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="Chronicle|Cinematics")
-	static void OffsetCamera(
+	static void OffsetResponseCamera(
 		const ALevelSequenceActor* LevelSequenceActor,
-		const FTransform& OwnerTransform,
-		const FTransform& ResponseTransform,
-		const float VerticalOffset,
-		const float ForwardOffset
+		const FTransform& ResponseCameraTransform,
+		const FVector& LocationOffset,
+		const FRotator& RotationOffset
 	);
 	
 	UFUNCTION(BlueprintCallable, Category = "Chronicle|Runtime")

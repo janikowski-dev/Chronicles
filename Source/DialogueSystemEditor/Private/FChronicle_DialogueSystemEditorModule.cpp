@@ -7,7 +7,7 @@
 #include "Factories/FChronicle_DialogueNodeFactory.h"
 #include "Utils/FChronicle_EditorStyle.h"
 
-#define LOCTEXT_NAMESPACE "FDialogueSystemModule"
+#define LOCTEXT_NAMESPACE "ChronicleDialogueSystemEditorModule"
 
 void FChronicle_DialogueSystemEditorModule::StartupModule()
 {

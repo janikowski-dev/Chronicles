@@ -20,29 +20,36 @@ FText UChronicle_DialogueNode::GetText() const
 	return FText::GetEmpty();
 }
 
+FText UChronicle_DialogueNode::GetSubtitle() const
+{
+	return FText::GetEmpty();
+}
+
+bool UChronicle_DialogueNode::QualifiesForInnerGraph() const
+{
+	return false;
+}
+
 UChronicle_RuleGraph* UChronicle_DialogueNode::GetOrCreateInnerGraph()
 {
-	if (UChronicle_DialogueAsset* Asset = GetTypedOuter<UChronicle_DialogueAsset>())
-	{
-		if (const TObjectPtr<UChronicle_RuleGraph>* Found = Asset->InnerGraphsByNode.Find(this))
-		{
-			return Found->Get();
-		}
-
-		UChronicle_RuleGraph* InnerGraph = NewObject<UChronicle_RuleGraph>(
-			Asset,
-			UChronicle_RuleGraph::StaticClass(),
-			NAME_None,
-			RF_Transactional
-		);
+	UChronicle_DialogueAsset* Asset = GetTypedOuter<UChronicle_DialogueAsset>();
 	
-		InnerGraph->Schema = UChronicle_RuleGraphSchema::StaticClass();
-		InnerGraph->GetSchema()->CreateDefaultNodesForGraph(*InnerGraph);
-		Asset->InnerGraphsByNode.Add(this, InnerGraph);
-		return InnerGraph;
+	if (const TObjectPtr<UChronicle_RuleGraph>* Found = Asset->InnerGraphsByNode.Find(this))
+	{
+		return Found->Get();
 	}
 
-	return nullptr;
+	UChronicle_RuleGraph* InnerGraph = NewObject<UChronicle_RuleGraph>(
+		Asset,
+		UChronicle_RuleGraph::StaticClass(),
+		NAME_None,
+		RF_Transactional
+	);
+	
+	InnerGraph->Schema = UChronicle_RuleGraphSchema::StaticClass();
+	InnerGraph->GetSchema()->CreateDefaultNodesForGraph(*InnerGraph);
+	Asset->InnerGraphsByNode.Add(this, InnerGraph);
+	return InnerGraph;
 }
 
 UChronicle_RuleGraph* UChronicle_DialogueNode::GetInnerGraph() const

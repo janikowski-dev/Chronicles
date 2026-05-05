@@ -1,5 +1,6 @@
 ﻿#include "FChronicle_DialogueExporter.h"
 
+#include "FChronicle_CharacterDirectory.h"
 #include "JsonObjectConverter.h"
 #include "Assets/UChronicle_DialogueAsset.h"
 #include "Graphs/UChronicle_DialogueGraph.h"
@@ -114,6 +115,7 @@ void FChronicle_DialogueExporter::ReadNodeData(UChronicle_DialogueData* Data, co
 void FChronicle_DialogueExporter::ReadSharedData(const UChronicle_DialogueNode* Node, FChronicle_DialogueNodeData& NodeData)
 {
     NodeData.Id = Node->Id;
+    NodeData.Emotion = Node->Emotion;
     NodeData.Text = Node->GetText().ToString();
 }
 
@@ -141,12 +143,16 @@ void FChronicle_DialogueExporter::ReadRoles(UChronicle_DialogueNode* Node, FChro
 {
     if (const UChronicle_DialogueLineNode* LineNode = Cast<UChronicle_DialogueLineNode>(Node))
     {
+        const FName SpeakerName = FChronicle_CharacterDirectory::GetAll().GetName(NodeData.SpeakerId);
+        NodeData.Subtitle = SpeakerName.ToString() + TEXT(": ") + Node->GetSubtitle().ToString();
         NodeData.ListenerId = LineNode->ListenerId;
         NodeData.SpeakerId = LineNode->SpeakerId;
     }
     
     if (const UChronicle_DialogueResponseNode* ResponseNode = Cast<UChronicle_DialogueResponseNode>(Node))
     {
+        const FName SpeakerName = FChronicle_CharacterDirectory::GetAll().GetName(NodeData.SpeakerId);
+        NodeData.Subtitle = SpeakerName.ToString() + TEXT(": ") + Node->GetSubtitle().ToString();
         NodeData.SpeakerId = ResponseNode->SpeakerId;
     }
 }
@@ -229,7 +235,7 @@ void FChronicle_DialogueExporter::ReadCallbacks(const UChronicle_DialogueNode* N
         {
             if (const UChronicle_RuleCallbackNode* Callback = Cast<UChronicle_RuleCallbackNode>(Rule))
             {
-                NodeData.Callbacks.Add(Callback->RuleId);
+                NodeData.Callbacks.Add(FChronicle_CallbackData(Callback->RuleId, Callback->ParameterType, Callback->CharacterIdParameter, Callback->IntegerParameter));
             }
         }
     }

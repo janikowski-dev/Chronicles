@@ -26,5 +26,8 @@ class CINEMATICTIMELINEEDITOR_API UChronicle_ShotPresetData : public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Preset")
+	FTransform ResponseCameraTransform;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Preset")
 	TArray<FShotPair> ShotPairs;
 };

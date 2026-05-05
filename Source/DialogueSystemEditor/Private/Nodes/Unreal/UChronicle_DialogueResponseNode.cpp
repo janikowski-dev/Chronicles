@@ -15,3 +15,13 @@ FText UChronicle_DialogueResponseNode::GetText() const
 {
 	return Text;
 }
+
+FText UChronicle_DialogueResponseNode::GetSubtitle() const
+{
+	return Subtitle;
+}
+
+bool UChronicle_DialogueResponseNode::QualifiesForInnerGraph() const
+{
+	return true;
+}

@@ -21,6 +21,11 @@
 			"LoadingPhase": "Default"
 		},
         {
+            "Name": "DialogueSystemEditor",
+            "Type": "Editor",
+            "LoadingPhase": "Default"
+        },
+        {
             "Name": "CinematicTimeline",
             "Type": "Runtime",
             "LoadingPhase": "Default"
@@ -31,13 +36,18 @@
             "LoadingPhase": "Default"
         },
 		{
-			"Name": "DialogueSystemEditor",
-			"Type": "Editor",
+			"Name": "RuleSystem",
+			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "RuleSystemEditor",
 			"Type": "Editor",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "CharacterSystem",
+			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
 		{

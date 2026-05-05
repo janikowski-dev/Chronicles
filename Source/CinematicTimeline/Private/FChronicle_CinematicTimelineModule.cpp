@@ -1,6 +1,6 @@
 ﻿#include "FChronicle_CinematicTimelineModule.h"
 
-#define LOCTEXT_NAMESPACE "FChronicleCinematicTimelineModule"
+#define LOCTEXT_NAMESPACE "ChronicleCinematicTimelineModule"
 
 void FChronicle_CinematicTimelineModule::StartupModule()
 {

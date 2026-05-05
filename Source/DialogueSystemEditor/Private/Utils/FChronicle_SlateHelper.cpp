@@ -2,6 +2,7 @@
 
 #include "FChronicle_CharacterDirectory.h"
 #include "Widgets/Input/SMultiLineEditableTextBox.h"
+#include "Widgets/Text/SInlineEditableTextBlock.h"
 
 TSharedRef<SWidget> FChronicle_SlateHelper::MakeTextField(
 	const TAttribute<FText>& Getter,
@@ -26,6 +27,22 @@ TSharedRef<SWidget> FChronicle_SlateHelper::MakeTextField(
 		.OnTextCommitted(Setter)
 		.AutoWrapText(true)
 		.WrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping)
+	];
+}
+
+TSharedRef<SWidget> FChronicle_SlateHelper::MakeSingleLineTextField(
+	const TAttribute<FText>& Getter,
+	const FOnTextCommitted& Setter
+)
+{
+	return SNew(SBox)
+	.HeightOverride(40.0f)
+	.WidthOverride(225.0f)
+	.Padding(4)
+	[
+		SNew(SEditableTextBox)
+		.Text(Getter)
+		.OnTextCommitted(Setter)
 	];
 }
 

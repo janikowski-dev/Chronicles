@@ -13,6 +13,8 @@ public:
 	virtual void AllocateDefaultPins() override;
 	virtual FText GetTitle() const override;
 	virtual FText GetText() const override;
+	virtual FText GetSubtitle() const override;
+	virtual bool QualifiesForInnerGraph() const override;
 	
 public:
 	UPROPERTY()
@@ -21,6 +23,8 @@ public:
 	int32 OrderIndex;
 	UPROPERTY()
 	FText Text;
+	UPROPERTY()
+	FText Subtitle;
 	UPROPERTY()
 	FGuid SpeakerId;
 };

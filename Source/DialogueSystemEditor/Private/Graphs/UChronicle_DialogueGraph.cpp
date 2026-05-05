@@ -1,6 +1,7 @@
 ﻿#include "UChronicle_DialogueGraph.h"
 
 #include "FChronicle_CharacterDirectory.h"
+#include "Assets/UChronicle_DialogueAsset.h"
 #include "Nodes/Unreal/UChronicle_DialogueLineNode.h"
 #include "Nodes/Unreal/UChronicle_DialogueResponseNode.h"
 #include "Nodes/Unreal/UChronicle_DialogueRootNode.h"
@@ -20,6 +21,11 @@ void UChronicle_DialogueGraph::PostLoad()
 
 void UChronicle_DialogueGraph::Refresh()
 {
+	if (RemoveInvalidInnerGraphs() && MarkPackageDirty())
+	{
+		NotifyGraphChanged();
+	}
+	
 	ApplyLayout();
 	IndexLines();
 	IndexResponses();
@@ -66,6 +72,31 @@ void UChronicle_DialogueGraph::RemoveParticipant(const TSharedPtr<FGuid>& Id)
 		NotifyGraphChanged();
 	}
 }
+
+#pragma region Validation
+
+bool UChronicle_DialogueGraph::RemoveInvalidInnerGraphs()
+{
+	UChronicle_DialogueAsset* Outer = GetTypedOuter<UChronicle_DialogueAsset>();
+	bool bRemovedAnyGraph = false;
+
+	for (const TObjectPtr Node : Nodes)
+	{
+		const UChronicle_DialogueNode* TypedNode = Cast<UChronicle_DialogueNode>(Node);
+
+		if (TypedNode->QualifiesForInnerGraph())
+		{
+			continue;
+		}
+
+		Outer->InnerGraphsByNode.Remove(TypedNode);
+		bRemovedAnyGraph = true;
+	}
+
+	return bRemovedAnyGraph;
+}
+
+#pragma endregion
 
 #pragma region Layout
 

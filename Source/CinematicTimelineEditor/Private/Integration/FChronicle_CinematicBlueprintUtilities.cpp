@@ -4,8 +4,8 @@
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "CineCameraActor.h"
+#include "CineCameraComponent.h"
 #include "MovieScene.h"
-#include "Animation/SkeletalMeshActor.h"
 #include "Sections/MovieSceneAudioSection.h"
 #include "Sections/MovieSceneCameraCutSection.h"
 #include "Tracks/MovieSceneCameraCutTrack.h"
@@ -13,9 +13,6 @@
 #include "Tracks/MovieSceneSpawnTrack.h"
 #include "UObject/SavePackage.h"
 #include "LevelSequence.h"
-#include "Tracks/MovieScene3DTransformTrack.h"
-#include "Sections/MovieScene3DTransformSection.h"
-#include "Channels/MovieSceneDoubleChannel.h"
 
 FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::InitSequence(
 	ULevelSequence* LevelSequence,
@@ -43,7 +40,9 @@ UBlueprint* FChronicle_CinematicBlueprintUtilities::CreateBlueprintFromParent(
 	const FString& PackagePath,
 	const FString& BlueprintName,
 	const FChronicle_DialogueInfo& Info,
-	const FTransform& ResponseTransform
+	const FTransform& ResponseTransform,
+	const TArray<FTransform>& CameraTransforms,
+	const TArray<FTransform>& ParticipantTransforms
 )
 {
 	if (!Info.Id.IsValid() || !ParentClass)
@@ -85,13 +84,55 @@ UBlueprint* FChronicle_CinematicBlueprintUtilities::CreateBlueprintFromParent(
 				FBlueprintEditorUtils::MarkBlueprintAsModified(Blueprint);
 			}
 			
-			FProperty* ResponseTransformProperty = FindFProperty<FProperty>(Blueprint->GeneratedClass, TEXT("ResponseTransform"));
+			FProperty* ResponseTransformProperty = FindFProperty<FProperty>(Blueprint->GeneratedClass, TEXT("ResponseCameraTransform"));
 
 			if (FStructProperty* StructProperty = CastField<FStructProperty>(ResponseTransformProperty))
 			{
 				void* StructPtr = StructProperty->ContainerPtrToValuePtr<void>(CDO);
 				StructProperty->Struct->CopyScriptStruct(StructPtr, &ResponseTransform);
 				FPropertyChangedEvent PropertyChangedEvent(StructProperty);
+				CDO->PostEditChangeProperty(PropertyChangedEvent);
+				Blueprint->Modify();
+				FBlueprintEditorUtils::MarkBlueprintAsModified(Blueprint);
+			}
+
+			FProperty* ParticipantTransformsProperty = FindFProperty<FProperty>(Blueprint->GeneratedClass, TEXT("ParticipantTransforms"));
+
+			if (FArrayProperty* ArrayProperty = CastField<FArrayProperty>(ParticipantTransformsProperty))
+			{
+				void* ArrayPtr = ArrayProperty->ContainerPtrToValuePtr<void>(CDO);
+				FScriptArrayHelper ArrayHelper(ArrayProperty, ArrayPtr);
+    
+				ArrayHelper.Resize(ParticipantTransforms.Num());
+    
+				for (int32 i = 0; i < ParticipantTransforms.Num(); i++)
+				{
+					void* ElementPtr = ArrayHelper.GetRawPtr(i);
+					CastField<FStructProperty>(ArrayProperty->Inner)->Struct->CopyScriptStruct(ElementPtr, &ParticipantTransforms[i]);
+				}
+    
+				FPropertyChangedEvent PropertyChangedEvent(ArrayProperty);
+				CDO->PostEditChangeProperty(PropertyChangedEvent);
+				Blueprint->Modify();
+				FBlueprintEditorUtils::MarkBlueprintAsModified(Blueprint);
+			}
+
+			FProperty* CameraTransformsProperty = FindFProperty<FProperty>(Blueprint->GeneratedClass, TEXT("CameraTransforms"));
+
+			if (FArrayProperty* ArrayProperty = CastField<FArrayProperty>(CameraTransformsProperty))
+			{
+				void* ArrayPtr = ArrayProperty->ContainerPtrToValuePtr<void>(CDO);
+				FScriptArrayHelper ArrayHelper(ArrayProperty, ArrayPtr);
+    
+				ArrayHelper.Resize(CameraTransforms.Num());
+    
+				for (int32 i = 0; i < CameraTransforms.Num(); i++)
+				{
+					void* ElementPtr = ArrayHelper.GetRawPtr(i);
+					CastField<FStructProperty>(ArrayProperty->Inner)->Struct->CopyScriptStruct(ElementPtr, &CameraTransforms[i]);
+				}
+    
+				FPropertyChangedEvent PropertyChangedEvent(ArrayProperty);
 				CDO->PostEditChangeProperty(PropertyChangedEvent);
 				Blueprint->Modify();
 				FBlueprintEditorUtils::MarkBlueprintAsModified(Blueprint);
@@ -177,6 +218,7 @@ FChronicle_SequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToRuntime
 			}
 			
 			Transition.Type = EChronicle_TransitionType::AutoContinue;
+			Transition.Callbacks = MatchingNode->Callbacks;
 			Transition.NodeId = SequenceData.NextNodeId;
 			Transition.Rules = MatchingNode->Rules;
 			Transition.SequenceId = OtherData.Id;
@@ -282,13 +324,13 @@ FSequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToInfo(
 	const UChronicle_ShotPresetData* Preset = CinematicData->PresetData.LoadSynchronous();
 	const int ParticipantCount = CinematicData->ParticipantIds.Num();
 
-	for (int i = 0; i < ParticipantCount; i++)
+	for (int I = 0; I < ParticipantCount; I++)
 	{
-		const FGuid& ParticipantId = CinematicData->ParticipantIds[i];
+		const FGuid& ParticipantId = CinematicData->ParticipantIds[I];
 
-		const FShotPair* MatchingPair = Preset ? Preset->ShotPairs.FindByPredicate([i](const FShotPair& Pair)
+		const FShotPair* MatchingPair = Preset ? Preset->ShotPairs.FindByPredicate([I](const FShotPair& Pair)
 		{
-			return Pair.ShotIndex == i;
+			return Pair.ShotIndex == I;
 		}) : nullptr;
 
 		FTransform ParticipantTransform;
@@ -305,8 +347,8 @@ FSequenceInfo FChronicle_CinematicBlueprintUtilities::ConvertToInfo(
 		FGuid CameraId = AddCamera(MovieScene, CameraTransform);
 		SequenceInfo.CameraIdByParticipantIds.Add(ParticipantId, CameraId);
 
-		USkeletalMesh* SkeletalMesh = CinematicData->ActorsById[ParticipantId].LoadSynchronous();
-		FGuid ModelId = AddModel(MovieScene, SkeletalMesh, ParticipantTransform);
+		TSoftClassPtr<AChronicle_CharacterActor> CharacterClass = CinematicData->ActorsById[ParticipantId].LoadSynchronous();
+		FGuid ModelId = AddModel(MovieScene, CharacterClass, ParticipantTransform);
 		SequenceInfo.ModelIdByParticipantIds.Add(ParticipantId, ModelId);
 	}
 	
@@ -373,6 +415,13 @@ FGuid FChronicle_CinematicBlueprintUtilities::AddCamera(
 	);
 
 	TmpTemplate->SetActorTransform(SpawnTransform);
+	
+	UCineCameraComponent* CameraComponent = TmpTemplate->GetCineCameraComponent();
+	CameraComponent->CurrentFocalLength = 75.0f;
+	CameraComponent->CurrentAperture = 2.8f;
+	CameraComponent->Filmback.SensorWidth = 36.0f;
+	CameraComponent->Filmback.SensorHeight = 20.25f;
+	CameraComponent->FocusSettings.FocusMethod = ECameraFocusMethod::DoNotOverride;
 
 	const FGuid CameraGuid = MovieScene->AddSpawnable(TEXT("Camera"), *TmpTemplate);
 
@@ -387,29 +436,30 @@ FGuid FChronicle_CinematicBlueprintUtilities::AddCamera(
 
 FGuid FChronicle_CinematicBlueprintUtilities::AddModel(
 	UMovieScene* MovieScene,
-	USkeletalMesh* SkeletalMesh,
+	const TSoftClassPtr<AChronicle_CharacterActor> CharacterClass,
 	const FTransform& SpawnTransform
 )
 {
-	ASkeletalMeshActor* TmpTemplate = NewObject<ASkeletalMeshActor>(
+	const UClass* LoadedClass = CharacterClass.LoadSynchronous();
+
+	AChronicle_CharacterActor* TmpTemplate = NewObject<AChronicle_CharacterActor>(
 		MovieScene,
-		ASkeletalMeshActor::StaticClass(),
-		MakeUniqueObjectName(MovieScene, ASkeletalMeshActor::StaticClass()),
+		LoadedClass,
+		MakeUniqueObjectName(MovieScene, LoadedClass),
 		RF_NoFlags
 	);
 
-	TmpTemplate->GetSkeletalMeshComponent()->SetSkeletalMesh(SkeletalMesh);
 	TmpTemplate->SetActorTransform(SpawnTransform);
 
-	const FGuid MeshGuid = MovieScene->AddSpawnable(*SkeletalMesh->GetName(), *TmpTemplate);
+	const FGuid CharacterGuid = MovieScene->AddSpawnable(*LoadedClass->GetName(), *TmpTemplate);
 
-	if (UMovieSceneSpawnTrack* SpawnTrack = MovieScene->AddTrack<UMovieSceneSpawnTrack>(MeshGuid))
+	if (UMovieSceneSpawnTrack* SpawnTrack = MovieScene->AddTrack<UMovieSceneSpawnTrack>(CharacterGuid))
 	{
 		SpawnTrack->Modify();
 		SpawnTrack->AddSection(*SpawnTrack->CreateNewSection());
 	}
 
-	return MeshGuid;
+	return CharacterGuid;
 }
 
 void FChronicle_CinematicBlueprintUtilities::ApplyChanges(

@@ -13,11 +13,14 @@ public:
 	UPROPERTY()
 	UStaticMeshComponent* DebugMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Setup")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Setup", meta=(ToolTip="Shot with index 0 is associated with player if present on the set."))
 	int32 ShotIndex;
 
 public:
 	AChronicle_ParticipantPoint();
 
 	virtual void PostInitProperties() override;
+
+private:
+	void AssignDebugMesh() const;
 };
